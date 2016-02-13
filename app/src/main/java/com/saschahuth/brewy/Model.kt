@@ -37,7 +37,7 @@ object Model {
             var updateDate: String,
             var isOrganic: String,
             var established: String,
-            var status: String
+            var status: String,
             var statusDisplay: String,
             var website: String,
             var locations: List<Locations>
