@@ -3,7 +3,7 @@ package com.saschahuth.brewy
 import android.app.Application
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 
-class BrewyApplication : Application() {
+class BrewyApp : Application() {
     override fun onCreate() {
         super.onCreate()
         CalligraphyConfig

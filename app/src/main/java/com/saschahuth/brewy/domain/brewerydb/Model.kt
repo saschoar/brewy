@@ -1,4 +1,4 @@
-package com.saschahuth.brewy
+package com.saschahuth.brewy.domain.brewerydb
 
 /**
  * Created by sascha on 13.02.16.
@@ -58,8 +58,8 @@ object Model {
     data class Country(
             var isoCode: String,
             var isoThree: String,
-            var displayName: String,
             var name: String,
+            var displayName: String,
             var numberCode: Number,
             var urlTitle: String,
             var createDate: String
@@ -79,6 +79,7 @@ object Model {
 
     data class Locations(
             var id: String,
+            var name: String,
             var country: Country,
             var latitude: Number,
             var longitude: Number,
@@ -90,7 +91,6 @@ object Model {
             var locality: String,
             var locationType: String,
             var locationTypeDisplay: String,
-            var name: String,
             var openToPublic: String,
             var postalCode: String,
             var region: String,
@@ -103,6 +103,7 @@ object Model {
 
     data class Style(
             var id: Number,
+            var name: String,
             var categoryId: Number,
             var category: Category,
             var abvMax: String,
@@ -113,9 +114,22 @@ object Model {
             var fgMin: String,
             var ibuMax: String,
             var ibuMin: String,
-            var name: String,
             var ogMin: String,
             var srmMax: String,
             var srmMin: String
+    )
+
+    data class Result<T>(
+            var status: String,
+            var message: String,
+            var data: T
+    )
+
+    data class ResultPage<T>(
+            var status: String,
+            var currentPage: Number,
+            var numberOfPages: Number,
+            var totalResults: Number,
+            var data: List<T>
     )
 }
