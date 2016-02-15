@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="fontPathRegular">fonts/Karla-Regular.ttf</string>
-    <string name="fontPathBold">fonts/Karla-Bold.ttf</string>
+    <string name="fontPathRegular">fonts/Karmilla-Regular-015.ttf</string>
+    <string name="fontPathBold">fonts/Karmilla-Bold-015.ttf</string>
     <string name="fontPathItalic">fonts/Karla-Italic.ttf</string>
     <string name="fontPathBoldItalic">fonts/Karla-BoldItalic.ttf</string>
     <string name="fontPathHeadline">fonts/AlegreyaSans-ExtraBold.ttf</string>
