@@ -9,12 +9,12 @@ data class Brewery(
         var name: String,
         var createDate: String,
         var description: String,
-        var images: Images,
+        var image: Image,
         var updateDate: String,
         var isOrganic: String,
         var established: String,
         var status: String,
         var statusDisplay: String,
         var website: String,
-        var locations: List<Locations>
+        var locations: List<Location>
 )
