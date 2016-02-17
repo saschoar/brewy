@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.Api
+import com.saschahuth.brewy.domain.brewerydb.PARAMETER_MILES
 import com.saschahuth.brewy.domain.brewerydb.model.Brewery
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.Result
@@ -58,7 +59,7 @@ class MainActivity : BaseActivity() {
                 })
 
         breweryDbApi
-                .getBreweriesByGeoPoint(40.024925, -83.0038657)
+                .getBreweriesByGeoPoint(40.024925, -83.0038657, unit = PARAMETER_MILES)
                 .enqueue(object : Callback<ResultPage<Brewery>> {
 
                     override fun onResponse(call: Call<ResultPage<Brewery>>?, response: Response<ResultPage<Brewery>>?) {

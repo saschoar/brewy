@@ -1,5 +1,7 @@
 package com.saschahuth.brewy.domain.brewerydb.model
 
+import com.saschahuth.brewy.domain.brewerydb.LocationType
+
 /**
  * Created by sascha on 13.02.16.
  */
@@ -16,7 +18,7 @@ data class Location(
         var isClosed: String,
         var isPrimary: String,
         var locality: String,
-        var locationType: String,
+        @LocationType var locationType: String,
         var locationTypeDisplay: String,
         var openToPublic: String,
         var postalCode: String,
