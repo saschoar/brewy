@@ -76,14 +76,14 @@ interface Api {
             @Query("region") region: String? = null): Call<ResultPage<Location>>
 
     @GET("search/geo/point")
-    fun getBreweriesByGeoPoint(
+    fun getLocationsByGeoPoint(
             @Query("lat") latitude: Double,
             @Query("lng") longitude: Double,
             @Query("radius") radius: Int? = null,
             @Query("unit") @DistanceUnit unit: String? = null,
             @Query("withSocialAccounts") withSocialAccounts: Boolean? = null,
             @Query("withGuilds") withGuilds: Boolean? = null,
-            @Query("withAlternateNames") withAlternateNames: Boolean? = null): Call<ResultPage<Brewery>>
+            @Query("withAlternateNames") withAlternateNames: Boolean? = null): Call<ResultPage<Location>>
 
 }
 

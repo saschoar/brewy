@@ -2,6 +2,7 @@ package com.saschahuth.brewy.util
 
 import android.app.Activity
 import android.support.design.widget.Snackbar
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 
@@ -22,4 +23,8 @@ fun View.snack(message: String, length: Int = Snackbar.LENGTH_LONG, f: Snackbar.
 fun Snackbar.action(action: String, color: Int? = null, listener: (View) -> Unit) {
     setAction(action, listener)
     color?.let { setActionTextColor(color) }
+}
+
+fun Activity.logDebug(any: Any?) {
+    Log.d(this.javaClass.simpleName, any?.toString())
 }

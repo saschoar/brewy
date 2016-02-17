@@ -9,7 +9,9 @@ import com.saschahuth.brewy.domain.brewerydb.LocationType
 data class Location(
         var id: String,
         var name: String,
+        var brewery: Brewery,
         var country: Country,
+        var streetAddress: String,
         var latitude: Number,
         var longitude: Number,
         var countryIsoCode: String,

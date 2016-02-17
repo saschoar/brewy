@@ -7,4 +7,6 @@
     <color name="colorPrimaryDark">#1E0E2A</color>
     <color name="colorAccent">#F7A32F</color>
     <color name="textDefault">#555</color>
+    <color name="textLight">#777</color>
+    <color name="imagePlaceholder">#eee</color>
 </resources>

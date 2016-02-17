@@ -9,7 +9,7 @@ data class Brewery(
         var name: String,
         var createDate: String,
         var description: String,
-        var image: Image,
+        var images: Images,
         var updateDate: String,
         var isOrganic: String,
         var established: String,

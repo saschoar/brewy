@@ -25,5 +25,5 @@ data class Beer(
         var type: String,
         var updateDate: String,
         var breweries: List<Brewery>,
-        var labels: Image
+        var labels: Images
 )
