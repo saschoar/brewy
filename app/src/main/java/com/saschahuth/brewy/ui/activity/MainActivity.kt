@@ -1,7 +1,10 @@
 package com.saschahuth.brewy.ui.activity
 
 import android.os.Bundle
-import com.saschahuth.brewy.R
+import com.mapbox.mapboxsdk.annotations.MarkerOptions
+import com.mapbox.mapboxsdk.constants.Style
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.saschahuth.brewy.BuildConfig
 import com.saschahuth.brewy.domain.brewerydb.Api
 import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
 import com.saschahuth.brewy.domain.brewerydb.model.Brewery
@@ -21,8 +24,15 @@ class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(com.saschahuth.brewy.R.layout.activity_main)
         //setSupportActionBar(toolbar)
+
+        mapView.setAccessToken(BuildConfig.MAPBOX_API_KEY)
+        mapView.setStyleUrl(Style.MAPBOX_STREETS)
+        mapView.isMyLocationEnabled = true
+        mapView.setOnMyLocationChangeListener { location -> mapView.centerCoordinate = LatLng(location.latitude, location.longitude) }
+        mapView.zoom = 11.toDouble()
+        mapView.onCreate(savedInstanceState)
 
         listView.adapter = locationAdapter
 
@@ -61,6 +71,14 @@ class MainActivity : BaseActivity() {
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         val names = response?.body()?.data?.map { location -> location.name }
                         locationAdapter.addAll(response?.body()?.data)
+                        mapView.addMarkers(
+                                response?.body()?.data!!.map {
+                                    location ->
+                                    MarkerOptions()
+                                            .position(LatLng(location.latitude.toDouble(), location.longitude.toDouble()))
+                                            .title(location.brewery.name)
+                                            .snippet(location.streetAddress)
+                                })
                         logDebug(names)
                     }
 
@@ -68,5 +86,35 @@ class MainActivity : BaseActivity() {
                         //TODO
                     }
                 })
+    }
+
+    override fun onStart() {
+        super.onStart()
+        mapView.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mapView.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        mapView.onPause()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mapView.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mapView.onDestroy()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        mapView.onSaveInstanceState(outState!!)
     }
 }
