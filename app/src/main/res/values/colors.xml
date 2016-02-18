@@ -3,10 +3,10 @@
     <!--<color name="colorPrimary">#6E7463</color>
     <color name="colorPrimaryDark">#54554F</color>
     <color name="colorAccent">#213336</color>-->
-    <color name="colorPrimary">#2E1E3A</color>
-    <color name="colorPrimaryDark">#1E0E2A</color>
-    <color name="colorAccent">#F7A32F</color>
-    <color name="textDefault">#555</color>
-    <color name="textLight">#777</color>
+    <color name="colorPrimary">#19243f</color>
+    <color name="colorPrimaryDark">#09142f</color>
+    <color name="colorAccent">#f9a825</color>
+    <color name="textDefault">#444</color>
+    <color name="textLight">#666</color>
     <color name="imagePlaceholder">#eee</color>
 </resources>
