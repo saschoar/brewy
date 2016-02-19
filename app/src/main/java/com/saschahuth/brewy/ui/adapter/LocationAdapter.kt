@@ -1,13 +1,13 @@
 package com.saschahuth.brewy.ui.adapter
 
 import android.content.Context
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_brewery.view.*
 
 /**
@@ -29,9 +29,13 @@ class LocationAdapter(context: Context) : ArrayAdapter<Location>(context, 0) {
                 item?.latitude!!.toDouble(),
                 item?.longitude!!.toDouble())
                 .toInt().toString() + " m away" //TODO just for testing
-        val uriString = item?.brewery?.images?.squareMedium ?: ""
-        view.image.setImageURI(Uri.parse(uriString), context)
-
+        val uriString = item?.brewery?.images?.squareMedium
+        if (uriString != null) {
+            Picasso.with(context).load(uriString).into(view.image)
+        } else {
+            Picasso.with(context).cancelRequest(view.image)
+            view.image.setBackgroundColor(R.color.textLight)
+        }
         return view
     }
 

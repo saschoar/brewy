@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".ui.activity.MainActivity">
 
     <FrameLayout
@@ -19,7 +20,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginLeft="@dimen/margin"
+            android:layout_margin="@dimen/margin"
             android:text="@string/app_name"
             android:textColor="?colorAccent"
             android:textSize="@dimen/textSizeToolbar"
@@ -27,16 +28,16 @@
 
     </FrameLayout>
 
-    <com.mapbox.mapboxsdk.views.MapView
+    <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/toolbar" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/mapView">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ListView
             android:id="@+id/listView"
@@ -50,4 +51,4 @@
             tools:listitem="@layout/item_brewery" />
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

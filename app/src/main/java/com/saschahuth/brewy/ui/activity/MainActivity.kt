@@ -1,10 +1,13 @@
 package com.saschahuth.brewy.ui.activity
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import com.mapbox.mapboxsdk.annotations.MarkerOptions
-import com.mapbox.mapboxsdk.constants.Style
-import com.mapbox.mapboxsdk.geometry.LatLng
-import com.saschahuth.brewy.BuildConfig
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
+import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.Api
 import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
 import com.saschahuth.brewy.domain.brewerydb.model.Brewery
@@ -22,17 +25,20 @@ class MainActivity : BaseActivity() {
 
     private val locationAdapter: LocationAdapter by lazy { LocationAdapter(this) }
 
+    private val PERMISSIONS_LOCATION = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.saschahuth.brewy.R.layout.activity_main)
+        setContentView(R.layout.activity_main)
         //setSupportActionBar(toolbar)
 
-        mapView.setAccessToken(BuildConfig.MAPBOX_API_KEY)
-        mapView.setStyleUrl(Style.MAPBOX_STREETS)
-        mapView.isMyLocationEnabled = true
-        mapView.setOnMyLocationChangeListener { location -> mapView.centerCoordinate = LatLng(location.latitude, location.longitude) }
-        mapView.zoom = 11.toDouble()
         mapView.onCreate(savedInstanceState)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_LOCATION)
+        } else {
+            mapView.getMapAsync({ callback -> callback.isMyLocationEnabled = true })
+        }
 
         listView.adapter = locationAdapter
 
@@ -71,14 +77,15 @@ class MainActivity : BaseActivity() {
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         val names = response?.body()?.data?.map { location -> location.name }
                         locationAdapter.addAll(response?.body()?.data)
-                        mapView.addMarkers(
-                                response?.body()?.data!!.map {
-                                    location ->
-                                    MarkerOptions()
-                                            .position(LatLng(location.latitude.toDouble(), location.longitude.toDouble()))
-                                            .title(location.brewery.name)
-                                            .snippet(location.streetAddress)
-                                })
+                        mapView.getMapAsync({ callback ->
+                            response?.body()?.data!!.map {
+                                location ->
+                                callback.addMarker(MarkerOptions()
+                                        .position(LatLng(location.latitude.toDouble(), location.longitude.toDouble()))
+                                        .title(location.brewery.name)
+                                        .snippet(location.streetAddress))
+                            }
+                        })
                         logDebug(names)
                     }
 
@@ -86,11 +93,6 @@ class MainActivity : BaseActivity() {
                         //TODO
                     }
                 })
-    }
-
-    override fun onStart() {
-        super.onStart()
-        mapView.onStart()
     }
 
     override fun onResume() {
@@ -103,11 +105,6 @@ class MainActivity : BaseActivity() {
         mapView.onPause()
     }
 
-    override fun onStop() {
-        super.onStop()
-        mapView.onStop()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         mapView.onDestroy()
@@ -116,5 +113,16 @@ class MainActivity : BaseActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         mapView.onSaveInstanceState(outState!!)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        when (requestCode) {
+            PERMISSIONS_LOCATION -> {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mapView.getMapAsync({ callback ->
+                        callback.isMyLocationEnabled = true })
+                }
+            }
+        }
     }
 }

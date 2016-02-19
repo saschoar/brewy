@@ -8,13 +8,12 @@
     android:padding="@dimen/margin"
     tools:ignore="MissingPrefix">
 
-    <com.facebook.drawee.view.SimpleDraweeView
+    <ImageView
         android:id="@+id/image"
         android:layout_width="@dimen/listItemImageWidth"
         android:layout_height="@dimen/listItemImageHeight"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/margin"
-        fresco:placeholderImage="@color/imagePlaceholder" />
+        android:layout_marginRight="@dimen/margin" />
 
     <TextView
         android:id="@+id/title"
