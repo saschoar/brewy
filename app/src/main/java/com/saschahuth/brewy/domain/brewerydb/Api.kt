@@ -1,6 +1,8 @@
 package com.saschahuth.brewy.domain.brewerydb
 
 import android.support.annotation.StringDef
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.saschahuth.brewy.BuildConfig
 import com.saschahuth.brewy.domain.brewerydb.model.Brewery
 import com.saschahuth.brewy.domain.brewerydb.model.Location
@@ -40,9 +42,13 @@ interface Api {
                 chain.proceed(request.newBuilder().url(url).build())
             })
 
+            val gson: Gson = GsonBuilder()
+                    .registerTypeAdapter(Boolean::class.java, BooleanTypeAdapter())
+                    .create()
+
             val restAdapter = Retrofit.Builder()
                     .baseUrl("http://api.brewerydb.com/v2/")
-                    .addConverterFactory(GsonConverterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create(gson))
                     .client(httpClient.build())
                     .build()
 

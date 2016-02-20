@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,27 +29,35 @@
 
     </FrameLayout>
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/slidingLayout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        sothree:umanoPanelHeight="96dp"
+        sothree:umanoFadeColor="?colorPrimary"
+        sothree:umanoScrollableView="@+id/listView"
+        sothree:umanoShadowHeight="4dp">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-        <ListView
-            android:id="@+id/listView"
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:divider="@null"
-            android:elevation="1dp"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/item_brewery" />
-    </RelativeLayout>
+            android:layout_height="match_parent" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:divider="@null"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_brewery" />
+        </FrameLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
 </LinearLayout>

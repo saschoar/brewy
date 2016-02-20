@@ -6,6 +6,6 @@
     <dimen name="textSizeDefault">16sp</dimen>
     <dimen name="textSizeSmall">14sp</dimen>
     <dimen name="textSizeToolbar">20sp</dimen>
-    <dimen name="listItemImageWidth">64sp</dimen>
-    <dimen name="listItemImageHeight">64sp</dimen>
+    <dimen name="listItemImageWidth">64dp</dimen>
+    <dimen name="listItemImageHeight">64dp</dimen>
 </resources>

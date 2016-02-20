@@ -48,4 +48,13 @@ class LocationAdapter(context: Context) : ArrayAdapter<Location>(context, 0) {
         location2.longitude = longitude2
         return location1.distanceTo(location2)
     }
+
+    fun getPosition(locationId: String): Int {
+        for (i in 0..count) {
+            if (getItem(i).id == locationId) {
+                return i
+            }
+        }
+        return -1
+    }
 }

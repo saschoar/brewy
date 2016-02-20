@@ -58,4 +58,5 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.sothree.slidinguppanel:library:3.2.1'
 }

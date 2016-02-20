@@ -6,13 +6,12 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.Api
 import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
-import com.saschahuth.brewy.domain.brewerydb.model.Brewery
 import com.saschahuth.brewy.domain.brewerydb.model.Location
-import com.saschahuth.brewy.domain.brewerydb.model.Result
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.adapter.LocationAdapter
 import com.saschahuth.brewy.util.logDebug
@@ -30,9 +29,9 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        //setSupportActionBar(toolbar)
 
         mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync({ callback -> callback.setOnMarkerClickListener({ marker -> scrollListToMarker(marker) }) })
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_LOCATION)
@@ -43,32 +42,6 @@ class MainActivity : BaseActivity() {
         listView.adapter = locationAdapter
 
         val breweryDbApi = Api.create()
-
-        breweryDbApi
-                .getBrewery("IEFRaK")
-                .enqueue(object : Callback<Result<Brewery>> {
-                    override fun onResponse(call: Call<Result<Brewery>>?, response: Response<Result<Brewery>>?) {
-                        logDebug(response?.body()?.data?.website)
-                    }
-
-                    override fun onFailure(call: Call<Result<Brewery>>?, throwable: Throwable?) {
-                        //TODO
-                    }
-                })
-
-        breweryDbApi
-                .getLocations(postalCode = 43202)
-                .enqueue(object : Callback<ResultPage<Location>> {
-
-                    override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
-                        val flatMapName = response?.body()?.data?.flatMap { location -> listOf(location.name) }
-                        logDebug(flatMapName.toString())
-                    }
-
-                    override fun onFailure(call: Call<ResultPage<Location>>?, throwable: Throwable?) {
-                        //TODO
-                    }
-                })
 
         breweryDbApi
                 .getLocationsByGeoPoint(40.024925, -83.0038657, unit = DISTANCE_UNIT_MILES)
@@ -82,8 +55,7 @@ class MainActivity : BaseActivity() {
                                 location ->
                                 callback.addMarker(MarkerOptions()
                                         .position(LatLng(location.latitude.toDouble(), location.longitude.toDouble()))
-                                        .title(location.brewery.name)
-                                        .snippet(location.streetAddress))
+                                        .title(location.id))
                             }
                         })
                         logDebug(names)
@@ -125,5 +97,14 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+    }
+
+    fun scrollListToMarker(marker: Marker): Boolean {
+        val position: Int = locationAdapter.getPosition(marker.title)
+        if (position != -1) {
+            listView.smoothScrollToPositionFromTop(position, 0, 0)
+            return true
+        }
+        return false
     }
 }
