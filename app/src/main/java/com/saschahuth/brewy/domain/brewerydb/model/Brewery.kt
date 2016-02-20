@@ -11,7 +11,7 @@ data class Brewery(
         var description: String,
         var images: Images,
         var updateDate: String,
-        var isOrganic: String,
+        var isOrganic: Boolean,
         var established: String,
         var status: String,
         var statusDisplay: String,

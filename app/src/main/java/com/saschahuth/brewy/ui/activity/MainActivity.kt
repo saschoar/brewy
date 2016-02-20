@@ -76,9 +76,9 @@ class MainActivity : BaseActivity() {
 
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         val names = response?.body()?.data?.map { location -> location.name }
-                        locationAdapter.addAll(response?.body()?.data)
+                        locationAdapter.addAll(response?.body()?.data?.filterNot { location -> location.inPlanning || location.isClosed })
                         mapView.getMapAsync({ callback ->
-                            response?.body()?.data!!.map {
+                            response?.body()?.data!!.filterNot { location -> location.inPlanning || location.isClosed }.map {
                                 location ->
                                 callback.addMarker(MarkerOptions()
                                         .position(LatLng(location.latitude.toDouble(), location.longitude.toDouble()))
@@ -120,7 +120,8 @@ class MainActivity : BaseActivity() {
             PERMISSIONS_LOCATION -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     mapView.getMapAsync({ callback ->
-                        callback.isMyLocationEnabled = true })
+                        callback.isMyLocationEnabled = true
+                    })
                 }
             }
         }

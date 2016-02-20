@@ -16,7 +16,7 @@ data class Beer(
         var glass: Glass,
         var glasswareId: Number,
         var ibu: String,
-        var isOrganic: String,
+        var isOrganic: Boolean,
         var originalGravity: Number,
         var status: String,
         var statusDisplay: String,
