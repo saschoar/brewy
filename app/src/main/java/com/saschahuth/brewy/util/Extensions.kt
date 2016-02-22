@@ -25,6 +25,6 @@ fun Snackbar.action(action: String, color: Int? = null, listener: (View) -> Unit
     color?.let { setActionTextColor(color) }
 }
 
-fun Activity.logDebug(any: Any?) {
+fun Any.logDebug(any: Any?) {
     Log.d(this.javaClass.simpleName, any?.toString())
 }

@@ -1,6 +1,4 @@
 <resources>
     <string name="app_name">Brewy</string>
 
-    <!-- Access Token -->
-    <string name="googleMapsApiRoute" translatable="false">@string/googleMapsApiKey</string>
 </resources>
