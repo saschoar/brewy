@@ -31,6 +31,8 @@ class NearbyBreweriesFragment : Fragment() {
 
     private val PERMISSIONS_LOCATION = 0
 
+    private var isSortingByName: Boolean = false
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_nearby_breweries, container, false)
     }
@@ -59,6 +61,17 @@ class NearbyBreweriesFragment : Fragment() {
             })
         })
 
+        sort.setOnClickListener({
+            if (isSortingByName) {
+                locationAdapter.sortByDistance()
+                sort.text = "Sorted by Distance"
+            } else {
+                locationAdapter.sortByName()
+                sort.text = "Sorted by Name"
+            }
+            isSortingByName = isSortingByName.not()
+        })
+
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_LOCATION)
         } else {
@@ -76,6 +89,9 @@ class NearbyBreweriesFragment : Fragment() {
             mapView.visibility = if (b) View.INVISIBLE else View.VISIBLE
             CalligraphyUtils.applyFontToTextView(activity, listLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
             CalligraphyUtils.applyFontToTextView(activity, mapLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
+            myLocation.visibility = if (b) View.GONE else View.VISIBLE
+            layers.visibility = if (b) View.GONE else View.VISIBLE
+            sort.visibility = if (b) View.VISIBLE else View.GONE
         })
 
         listLabel.setOnTouchListener({
@@ -94,11 +110,7 @@ class NearbyBreweriesFragment : Fragment() {
                 .enqueue(object : Callback<ResultPage<Location>> {
 
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
-                        val names = response?.body()?.data?.map { location -> location.name }
-                        locationAdapter.addAll(response?.body()?.data?.sortedBy {
-                            location ->
-                            location.brewery.name.toLowerCase()
-                        }?.filterNot {
+                        locationAdapter.addAll(response?.body()?.data?.filterNot {
                             location ->
                             location.inPlanning || location.isClosed
                         })
@@ -129,8 +141,8 @@ class NearbyBreweriesFragment : Fragment() {
         mapView.onPause()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         mapView?.onDestroy()
     }
 

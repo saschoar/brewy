@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="marginTiny">4sp</dimen>
     <dimen name="marginSmall">8sp</dimen>
     <dimen name="margin">16sp</dimen>
     <dimen name="marginLarge">24sp</dimen>

@@ -34,7 +34,7 @@ class LocationAdapter(context: Context) : ArrayAdapter<Location>(context, 0) {
             Picasso.with(context).load(uriString).into(view.image)
         } else {
             Picasso.with(context).cancelRequest(view.image)
-            view.image.setBackgroundColor(R.color.textLight)
+            view.image.setImageResource(R.color.imagePlaceholder)
         }
         return view
     }
@@ -49,12 +49,19 @@ class LocationAdapter(context: Context) : ArrayAdapter<Location>(context, 0) {
         return location1.distanceTo(location2)
     }
 
-    fun getPosition(locationId: String): Int {
-        for (i in 0..count) {
-            if (getItem(i).id == locationId) {
-                return i
-            }
+    fun sortByName() {
+        sort {
+            location1, location2 ->
+            location1.brewery.name.compareTo(location2.brewery.name, true)
         }
-        return -1
+    }
+
+    fun sortByDistance() {
+        sort {
+            location1, location2 ->
+            distanceBetween(40.024925, -83.0038657, location1.latitude.toDouble(), location1.longitude.toDouble()).compareTo(
+                    distanceBetween(40.024925, -83.0038657, location2.latitude.toDouble(), location2.longitude.toDouble())
+            )
+        }
     }
 }

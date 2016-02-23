@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Theme.Brewy" parent="Base.Theme.Brewy"/>
+    <style name="Theme.Brewy" parent="Base.Theme.Brewy" />
 
     <style name="Base.Theme.Brewy" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -14,6 +14,15 @@
     <style name="BrewyTextAppearance" parent="android:Widget.TextView">
         <item name="android:textSize">@dimen/textSizeDefault</item>
         <item name="android:textColor">@color/textDefault</item>
+    </style>
+
+    <style name="AlwaysColorizedSwitch">
+        <!-- Active thumb color & Active track color(30% transparency) -->
+        <item name="colorControlActivated">?colorAccent</item>
+        <!-- Inactive thumb color -->
+        <item name="colorSwitchThumbNormal">?colorAccent</item>
+        <!-- Inactive track color(30% transparency) -->
+        <item name="android:colorForeground">?colorAccent</item>
     </style>
 
 </resources>
