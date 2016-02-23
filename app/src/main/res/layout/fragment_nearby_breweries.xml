@@ -19,7 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Map"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textSize="@dimen/textSizeSmall" />
 
         <Switch
             android:id="@+id/listMapSwitch"
@@ -35,7 +36,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="List"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textSize="@dimen/textSizeSmall" />
 
         <TextView
             android:id="@+id/myLocation"
@@ -47,7 +49,8 @@
             android:drawablePadding="@dimen/marginSmall"
             android:gravity="center_vertical"
             android:text="My Location"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textSize="@dimen/textSizeSmall" />
 
         <TextView
             android:id="@+id/layers"
@@ -57,7 +60,8 @@
             android:drawablePadding="@dimen/marginSmall"
             android:gravity="center_vertical"
             android:text="Streets"
-            android:textAllCaps="true" />
+            android:textAllCaps="true"
+            android:textSize="@dimen/textSizeSmall" />
     </LinearLayout>
 
     <FrameLayout
