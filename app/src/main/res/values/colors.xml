@@ -9,4 +9,6 @@
     <color name="textDefault">#444</color>
     <color name="textLight">#666</color>
     <color name="imagePlaceholder">#eee</color>
+    <color name="filterBackground">#eee</color>
+    <color name="navigationBarBackground">#ccc</color>
 </resources>

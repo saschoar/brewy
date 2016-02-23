@@ -2,7 +2,7 @@
 
     <style name="Theme.Brewy" parent="Base.Theme.Brewy">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:statusBarColor">?colorPrimaryDark</item>
     </style>
 
 </resources>

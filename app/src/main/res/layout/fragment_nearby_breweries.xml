@@ -1,31 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.activity.MainActivity">
+    tools:ignore="MissingPrefix">
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapView"
-        android:visibility="invisible"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:background="@color/filterBackground"
+        android:elevation="4dp"
+        android:padding="@dimen/margin">
+
+        <TextView
+            android:id="@+id/mapLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Map"
+            android:textAllCaps="true" />
+
+        <Switch
+            android:id="@+id/listMapSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/marginSmall"
+            android:layout_marginRight="@dimen/marginSmall"
+            android:checked="true" />
+
+        <TextView
+            android:id="@+id/listLabel"
+            fontPath="@string/fontPathBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="List"
+            android:textAllCaps="true" />
+
+        <TextView
+            android:id="@+id/myLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/marginLarge"
+            android:layout_marginRight="@dimen/marginLarge"
+            android:drawableLeft="@drawable/ic_my_location_24dp"
+            android:drawablePadding="@dimen/marginSmall"
+            android:gravity="center_vertical"
+            android:text="My Location"
+            android:textAllCaps="true" />
+
+        <TextView
+            android:id="@+id/layers"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:drawableLeft="@drawable/ic_layers_24dp"
+            android:drawablePadding="@dimen/marginSmall"
+            android:gravity="center_vertical"
+            android:text="Streets"
+            android:textAllCaps="true" />
+    </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        tools:context=".ui.activity.MainActivity">
 
-        <ListView
-            android:id="@+id/listView"
+        <com.google.android.gms.maps.MapView
+            android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:divider="@null"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/item_brewery" />
-    </FrameLayout>
+            android:visibility="invisible" />
 
-</FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ListView
+                android:id="@+id/listView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:divider="@null"
+                android:paddingTop="@dimen/marginSmall"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_brewery" />
+        </FrameLayout>
+
+    </FrameLayout>
+</LinearLayout>

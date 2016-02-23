@@ -9,6 +9,8 @@ import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.saschahuth.brewy.R
@@ -17,11 +19,11 @@ import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.adapter.LocationAdapter
-import com.saschahuth.brewy.util.logDebug
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import uk.co.chrisjenx.calligraphy.CalligraphyUtils
 
 class NearbyBreweriesFragment : Fragment() {
 
@@ -37,14 +39,53 @@ class NearbyBreweriesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mapView.onCreate(savedInstanceState)
+        mapView.getMapAsync({
+            callback ->
+            callback.uiSettings.isMyLocationButtonEnabled = false
+        })
+
+        myLocation.setOnClickListener({
+            mapView.getMapAsync({
+                callback ->
+                callback.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
+            })
+        })
+
+        layers.setOnClickListener({
+            mapView.getMapAsync({
+                callback ->
+                callback.mapType = if (callback.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
+                layers.text = if (callback.mapType == GoogleMap.MAP_TYPE_NORMAL) "Streets" else "Hybrid"
+            })
+        })
 
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_LOCATION)
         } else {
-            mapView.getMapAsync({ callback -> callback.isMyLocationEnabled = true })
+            mapView.getMapAsync({
+                callback ->
+                callback.isMyLocationEnabled = true
+            })
         }
 
         listView.adapter = locationAdapter
+
+        listMapSwitch.setOnCheckedChangeListener({
+            button, b ->
+            listView.visibility = if (b) View.VISIBLE else View.INVISIBLE
+            mapView.visibility = if (b) View.INVISIBLE else View.VISIBLE
+            CalligraphyUtils.applyFontToTextView(activity, listLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
+            CalligraphyUtils.applyFontToTextView(activity, mapLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
+        })
+
+        listLabel.setOnTouchListener({
+            view, motionEvent ->
+            listMapSwitch.dispatchTouchEvent(motionEvent)
+        })
+        mapLabel.setOnTouchListener({
+            view, motionEvent ->
+            listMapSwitch.dispatchTouchEvent(motionEvent)
+        })
 
         val breweryDbApi = Api.create()
 
@@ -54,16 +95,22 @@ class NearbyBreweriesFragment : Fragment() {
 
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         val names = response?.body()?.data?.map { location -> location.name }
-                        locationAdapter.addAll(response?.body()?.data?.filterNot { location -> location.inPlanning || location.isClosed })
+                        locationAdapter.addAll(response?.body()?.data?.sortedBy {
+                            location ->
+                            location.brewery.name.toLowerCase()
+                        }?.filterNot {
+                            location ->
+                            location.inPlanning || location.isClosed
+                        })
                         mapView.getMapAsync({ callback ->
                             response?.body()?.data!!.filterNot { location -> location.inPlanning || location.isClosed }.map {
                                 location ->
                                 callback.addMarker(MarkerOptions()
                                         .position(LatLng(location.latitude.toDouble(), location.longitude.toDouble()))
-                                        .title(location.id))
+                                        .title(location.name)
+                                        .snippet(location.streetAddress))
                             }
                         })
-                        logDebug(names)
                     }
 
                     override fun onFailure(call: Call<ResultPage<Location>>?, throwable: Throwable?) {
