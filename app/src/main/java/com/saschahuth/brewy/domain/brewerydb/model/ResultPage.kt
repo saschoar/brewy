@@ -5,9 +5,9 @@ package com.saschahuth.brewy.domain.brewerydb.model
  */
 
 data class ResultPage<T>(
-        var status: String,
-        var currentPage: Number,
-        var numberOfPages: Number,
-        var totalResults: Number,
-        var data: List<T>
+        var status: String?,
+        var currentPage: Number?,
+        var numberOfPages: Number?,
+        var totalResults: Number?,
+        var data: List<T>?
 )

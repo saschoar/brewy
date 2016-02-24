@@ -5,7 +5,7 @@ package com.saschahuth.brewy.domain.brewerydb.model
  */
 
 data class Result<T>(
-        var status: String,
-        var message: String,
-        var data: T
+        var status: String?,
+        var message: String?,
+        var data: T?
 )

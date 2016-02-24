@@ -1,12 +1,18 @@
 <resources>
-    <dimen name="marginTiny">4sp</dimen>
-    <dimen name="marginSmall">8sp</dimen>
-    <dimen name="margin">16sp</dimen>
-    <dimen name="marginLarge">24sp</dimen>
+    <!-- spacing -->
+    <dimen name="marginTiny">4dp</dimen>
+    <dimen name="marginSmall">8dp</dimen>
+    <dimen name="margin">16dp</dimen>
+    <dimen name="marginLarge">24dp</dimen>
+
+    <!-- text sizes -->
     <dimen name="textSizeLarge">18sp</dimen>
     <dimen name="textSizeDefault">16sp</dimen>
     <dimen name="textSizeSmall">14sp</dimen>
     <dimen name="textSizeToolbar">20sp</dimen>
+    <dimen name="textSizeDetailHeadline">30sp</dimen>
+
+    <!-- image sizes -->
     <dimen name="listItemImageWidth">64dp</dimen>
     <dimen name="listItemImageHeight">64dp</dimen>
     <dimen name="detailImageWidth">128dp</dimen>

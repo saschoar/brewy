@@ -16,6 +16,11 @@ apply plugin: 'kotlin-android-extensions'
 repositories {
     mavenCentral()
     maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven { url "https://jitpack.io" }
+}
+
+kapt {
+    generateStubs = true
 }
 
 android {
@@ -59,4 +64,6 @@ dependencies {
     compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.github.grandstaish.paperparcel:paperparcel:1.0.0-beta1'
+    kapt 'com.github.grandstaish.paperparcel:compiler:1.0.0-beta1'
 }

@@ -52,15 +52,15 @@ class LocationAdapter(context: Context) : ArrayAdapter<Location>(context, 0) {
     fun sortByName() {
         sort {
             location1, location2 ->
-            location1.brewery.name.compareTo(location2.brewery.name, true)
+            location1.brewery?.name?.compareTo(location2.brewery?.name!!, true)!!
         }
     }
 
     fun sortByDistance() {
         sort {
             location1, location2 ->
-            distanceBetween(40.024925, -83.0038657, location1.latitude.toDouble(), location1.longitude.toDouble()).compareTo(
-                    distanceBetween(40.024925, -83.0038657, location2.latitude.toDouble(), location2.longitude.toDouble())
+            distanceBetween(40.024925, -83.0038657, location1.latitude?.toDouble()!!, location1.longitude?.toDouble()!!).compareTo(
+                    distanceBetween(40.024925, -83.0038657, location2.latitude?.toDouble()!!, location2.longitude?.toDouble()!!)
             )
         }
     }

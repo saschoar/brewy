@@ -34,13 +34,13 @@ class ItemAdapter(list: List<Location>?, context: Context) : RecyclerView.Adapte
         val location: Location? = list?.get(position)
 
         if (location != null) {
-            viewHolder?.title?.text = location.brewery.name + if (location.name == "Main Brewery") "" else " (" + location.name + ")" //TODO just for testing
+            viewHolder?.title?.text = location.brewery?.name + if (location.name == "Main Brewery") "" else " (" + location.name + ")" //TODO just for testing
             viewHolder?.address?.text = location.streetAddress + ", " + location.postalCode + " " + location.locality
             viewHolder?.distance?.text = distanceBetween(
                     40.024925,
                     -83.0038657,
-                    location.latitude.toDouble(),
-                    location.longitude.toDouble())
+                    location.latitude?.toDouble(),
+                    location.longitude?.toDouble())
                     .toInt().toString() + " m away" //TODO just for testing
             val uriString: String? = location.brewery?.images?.squareMedium
             if (uriString != null) {
@@ -53,14 +53,18 @@ class ItemAdapter(list: List<Location>?, context: Context) : RecyclerView.Adapte
         }
     }
 
-    fun distanceBetween(latitude1: Double, longitude1: Double, latitude2: Double, longitude2: Double): Float {
-        val location1 = android.location.Location("")
-        location1.latitude = latitude1
-        location1.longitude = longitude1
-        val location2 = android.location.Location("")
-        location2.latitude = latitude2
-        location2.longitude = longitude2
-        return location1.distanceTo(location2)
+    fun distanceBetween(latitude1: Double?, longitude1: Double?, latitude2: Double?, longitude2: Double?): Float {
+        if (latitude1 == null || latitude2 == null || longitude1 == null || longitude2 == null) {
+            return 0F
+        } else {
+            val location1 = android.location.Location("")
+            location1.latitude = latitude1
+            location1.longitude = longitude1
+            val location2 = android.location.Location("")
+            location2.latitude = latitude2
+            location2.longitude = longitude2
+            return location1.distanceTo(location2)
+        }
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

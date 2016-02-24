@@ -5,7 +5,7 @@ package com.saschahuth.brewy.domain.brewerydb.model
  */
 
 data class Available(
-        var id: String,
-        var name: String,
-        var description: String
+        var id: String?,
+        var name: String?,
+        var description: String?
 )

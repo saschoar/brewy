@@ -1,6 +1,7 @@
 package com.saschahuth.brewy.ui.fragment
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -17,7 +18,9 @@ import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.Api
 import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
 import com.saschahuth.brewy.domain.brewerydb.model.Location
+import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
+import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.ui.adapter.LocationAdapter
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
 import retrofit2.Call
@@ -41,23 +44,19 @@ class NearbyBreweriesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync({
-            callback ->
-            callback.uiSettings.isMyLocationButtonEnabled = false
-        })
 
         myLocation.setOnClickListener({
             mapView.getMapAsync({
-                callback ->
-                callback.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
+                mapView ->
+                mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
             })
         })
 
         layers.setOnClickListener({
             mapView.getMapAsync({
-                callback ->
-                callback.mapType = if (callback.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
-                layers.text = if (callback.mapType == GoogleMap.MAP_TYPE_NORMAL) "Streets" else "Hybrid"
+                mapView ->
+                mapView.mapType = if (mapView.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
+                layers.text = if (mapView.mapType == GoogleMap.MAP_TYPE_NORMAL) "Streets" else "Hybrid"
             })
         })
 
@@ -76,12 +75,20 @@ class NearbyBreweriesFragment : Fragment() {
             ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_LOCATION)
         } else {
             mapView.getMapAsync({
-                callback ->
-                callback.isMyLocationEnabled = true
+                mapView ->
+                mapView.isMyLocationEnabled = true
             })
         }
 
         listView.adapter = locationAdapter
+
+        listView.setOnItemClickListener {
+            adapterView, view, i, l ->
+            val locationParcel = LocationParcel.wrap(adapterView.adapter.getItem(i) as Location)
+            val intent = Intent(activity, LocationDetailsActivity::class.java)
+            intent.putExtra("location", locationParcel)
+            startActivity(intent)
+        }
 
         listMapSwitch.setOnCheckedChangeListener({
             button, b ->
@@ -112,13 +119,13 @@ class NearbyBreweriesFragment : Fragment() {
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         locationAdapter.addAll(response?.body()?.data?.filterNot {
                             location ->
-                            location.inPlanning || location.isClosed
+                            location.inPlanning!! || location.isClosed!!
                         })
-                        mapView.getMapAsync({ callback ->
-                            response?.body()?.data!!.filterNot { location -> location.inPlanning || location.isClosed }.map {
+                        mapView.getMapAsync({ mapView ->
+                            response?.body()?.data!!.filterNot { location -> location.inPlanning!! || location.isClosed!! }.map {
                                 location ->
-                                callback.addMarker(MarkerOptions()
-                                        .position(LatLng(location.latitude.toDouble(), location.longitude.toDouble()))
+                                mapView.addMarker(MarkerOptions()
+                                        .position(LatLng(location.latitude?.toDouble()!!, location.longitude?.toDouble()!!))
                                         .title(location.name)
                                         .snippet(location.streetAddress))
                             }
@@ -155,8 +162,9 @@ class NearbyBreweriesFragment : Fragment() {
         when (requestCode) {
             PERMISSIONS_LOCATION -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mapView.getMapAsync({ callback ->
-                        callback.isMyLocationEnabled = true
+                    mapView.getMapAsync({ mapView ->
+                        mapView.isMyLocationEnabled = true
+                        mapView.uiSettings.isMyLocationButtonEnabled = false
                     })
                 }
             }

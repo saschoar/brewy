@@ -5,7 +5,7 @@ package com.saschahuth.brewy.domain.brewerydb.model
  */
 
 data class Glass(
-        var id: String,
-        var name: String,
-        var createDate: String
+        var id: String?,
+        var name: String?,
+        var createDate: String?
 )
