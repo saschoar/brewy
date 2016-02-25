@@ -160,7 +160,7 @@ class NearbyBreweriesFragment : Fragment() {
     fun selectMarker(marker: Marker?) {
         selectedMarker?.setIcon(markerIcon)
         selectedMarker = marker
-        
+
         val location = if (marker != null) locationAdapter.findById(marker.title) else null
         if (marker != null && location != null) {
             marker.setIcon(selectedMarkerIcon)
@@ -180,8 +180,8 @@ class NearbyBreweriesFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        markerIcon = getBitmapDescriptor(R.drawable.ic_marker_28dp)
-        selectedMarkerIcon = getBitmapDescriptor(R.drawable.ic_marker_selected_36dp)
+        markerIcon = getBitmapDescriptor(R.drawable.ic_marker_36dp)
+        selectedMarkerIcon = getBitmapDescriptor(R.drawable.ic_marker_selected_48dp)
     }
 
     override fun onResume() {
@@ -218,10 +218,9 @@ class NearbyBreweriesFragment : Fragment() {
 
     //TODO better caching of result
     fun getBitmapDescriptor(id: Int): BitmapDescriptor {
-        val density = resources.displayMetrics.density
         val vectorDrawable = ContextCompat.getDrawable(context, id)
-        val h = vectorDrawable.intrinsicHeight * density
-        val w = vectorDrawable.intrinsicWidth * density
+        val h = vectorDrawable.intrinsicHeight
+        val w = vectorDrawable.intrinsicWidth
         vectorDrawable.setBounds(0, 0, w.toInt(), h.toInt())
         val bm = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bm)
