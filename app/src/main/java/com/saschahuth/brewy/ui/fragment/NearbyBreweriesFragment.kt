@@ -23,7 +23,10 @@ import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.ui.adapter.LocationAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
 import com.saschahuth.brewy.util.requestLocationPermission
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
+import kotlinx.android.synthetic.main.view_drag_header.*
+import kotlinx.android.synthetic.main.view_drag_header.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -48,6 +51,35 @@ class NearbyBreweriesFragment : Fragment() {
 
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val header = LayoutInflater.from(activity).inflate(R.layout.view_drag_header, null)
+
+        header.sort.setOnClickListener {
+            if (isSortingByName) {
+                locationAdapter.sortByDistance()
+                sort.text = "Sorted by Distance"
+            } else {
+                locationAdapter.sortByName()
+                sort.text = "Sorted by Name"
+            }
+            isSortingByName = isSortingByName.not()
+        }
+
+        listView.addHeaderView(header, null, false)
+
+        slidingLayout.setPanelSlideListener(object : SlidingUpPanelLayout.SimplePanelSlideListener() {
+
+            override fun onPanelExpanded(panel: View?) {
+                super.onPanelExpanded(panel)
+                selectMarker(null)
+                slidingLayout.anchorPoint = 1.toFloat()
+            }
+
+            override fun onPanelCollapsed(panel: View?) {
+                super.onPanelCollapsed(panel)
+            }
+
+        })
 
         mapView.onCreate(savedInstanceState)
 
@@ -79,22 +111,12 @@ class NearbyBreweriesFragment : Fragment() {
             }
         }
 
-        sort.setOnClickListener {
-            if (isSortingByName) {
-                locationAdapter.sortByDistance()
-                sort.text = "Sorted by Distance"
-            } else {
-                locationAdapter.sortByName()
-                sort.text = "Sorted by Name"
-            }
-            isSortingByName = isSortingByName.not()
-        }
-
         if (!activity.hasLocationPermission()) {
             activity.requestLocationPermission(PERMISSIONS_LOCATION)
         } else {
             mapView.getMapAsync {
                 it.isMyLocationEnabled = true
+                it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
             }
         }
 

@@ -20,7 +20,6 @@ class MainActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
 
         val adapter = MainContentFragmentAdapter(supportFragmentManager)
         adapter.addFragment(NearbyBreweriesFragment(), "Nearby")

@@ -29,7 +29,7 @@ interface Api {
 
             val httpClient = OkHttpClient.Builder()
 
-            httpClient.addInterceptor(logging)
+            //httpClient.addInterceptor(logging)
 
             httpClient.addInterceptor({ chain ->
                 val request = chain.request()
