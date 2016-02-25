@@ -24,8 +24,8 @@
             app:collapsedTitleTextAppearance="@style/CollapsedTitleTextAppearance"
             app:contentScrim="?attr/colorPrimary"
             app:expandedTitleGravity="center_horizontal"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
+            app:expandedTitleMarginEnd="@dimen/marginLarge"
+            app:expandedTitleMarginStart="@dimen/marginLarge"
             app:expandedTitleTextAppearance="@style/ExpandedTitleTextAppearance"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -64,8 +64,8 @@
                 android:id="@+id/description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/textDefault"
                 android:layout_marginBottom="@dimen/marginLarge"
+                android:textColor="@color/textDefault"
                 android:textSize="@dimen/textSizeDefault"
                 tools:text="Description" />
 

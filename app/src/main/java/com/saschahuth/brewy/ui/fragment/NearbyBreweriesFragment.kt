@@ -1,10 +1,10 @@
 package com.saschahuth.brewy.ui.fragment
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
-import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
@@ -12,8 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.Api
 import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
@@ -22,6 +21,8 @@ import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.ui.adapter.LocationAdapter
+import com.saschahuth.brewy.util.hasLocationPermission
+import com.saschahuth.brewy.util.requestLocationPermission
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -40,27 +41,45 @@ class NearbyBreweriesFragment : Fragment() {
         return inflater?.inflate(R.layout.fragment_nearby_breweries, container, false)
     }
 
+    var selectedMarker: Marker? = null
+
+    var markerIcon: BitmapDescriptor? = null
+    var selectedMarkerIcon: BitmapDescriptor? = null
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         mapView.onCreate(savedInstanceState)
 
-        myLocation.setOnClickListener({
-            mapView.getMapAsync({
-                mapView ->
-                mapView.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
-            })
-        })
+        mapView.getMapAsync {
+            it.uiSettings.isMyLocationButtonEnabled = false
+            it.setOnMarkerClickListener {
+                selectMarker(it)
+                true
+            }
+            it.setOnMapClickListener {
+                selectMarker(null)
+            }
+        }
 
-        layers.setOnClickListener({
-            mapView.getMapAsync({
-                mapView ->
-                mapView.mapType = if (mapView.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
-                layers.text = if (mapView.mapType == GoogleMap.MAP_TYPE_NORMAL) "Streets" else "Hybrid"
-            })
-        })
+        markerLocationView.setOnClickListener {
+            openDetailsActivity(markerLocationView.boundLocation)
+        }
 
-        sort.setOnClickListener({
+        myLocation.setOnClickListener {
+            mapView.getMapAsync {
+                it.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
+            }
+        }
+
+        layers.setOnClickListener {
+            mapView.getMapAsync {
+                it.mapType = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
+                layers.text = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) "Streets" else "Hybrid"
+            }
+        }
+
+        sort.setOnClickListener {
             if (isSortingByName) {
                 locationAdapter.sortByDistance()
                 sort.text = "Sorted by Distance"
@@ -69,28 +88,24 @@ class NearbyBreweriesFragment : Fragment() {
                 sort.text = "Sorted by Name"
             }
             isSortingByName = isSortingByName.not()
-        })
+        }
 
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(activity, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), PERMISSIONS_LOCATION)
+        if (!activity.hasLocationPermission()) {
+            activity.requestLocationPermission(PERMISSIONS_LOCATION)
         } else {
-            mapView.getMapAsync({
-                mapView ->
-                mapView.isMyLocationEnabled = true
-            })
+            mapView.getMapAsync {
+                it.isMyLocationEnabled = true
+            }
         }
 
         listView.adapter = locationAdapter
 
         listView.setOnItemClickListener {
             adapterView, view, i, l ->
-            val locationParcel = LocationParcel.wrap(adapterView.adapter.getItem(i) as Location)
-            val intent = Intent(activity, LocationDetailsActivity::class.java)
-            intent.putExtra("location", locationParcel)
-            startActivity(intent)
+            openDetailsActivity(adapterView.adapter.getItem(i) as Location)
         }
 
-        listMapSwitch.setOnCheckedChangeListener({
+        listMapSwitch.setOnCheckedChangeListener {
             button, b ->
             listView.visibility = if (b) View.VISIBLE else View.INVISIBLE
             mapView.visibility = if (b) View.INVISIBLE else View.VISIBLE
@@ -99,16 +114,19 @@ class NearbyBreweriesFragment : Fragment() {
             myLocation.visibility = if (b) View.GONE else View.VISIBLE
             layers.visibility = if (b) View.GONE else View.VISIBLE
             sort.visibility = if (b) View.VISIBLE else View.GONE
-        })
+            if (b) {
+                selectMarker(null)
+            }
+        }
 
-        listLabel.setOnTouchListener({
+        listLabel.setOnTouchListener {
             view, motionEvent ->
             listMapSwitch.dispatchTouchEvent(motionEvent)
-        })
-        mapLabel.setOnTouchListener({
+        }
+        mapLabel.setOnTouchListener {
             view, motionEvent ->
             listMapSwitch.dispatchTouchEvent(motionEvent)
-        })
+        }
 
         val breweryDbApi = Api.create()
 
@@ -118,24 +136,52 @@ class NearbyBreweriesFragment : Fragment() {
 
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         locationAdapter.addAll(response?.body()?.data?.filterNot {
-                            location ->
-                            location.inPlanning!! || location.isClosed!!
+                            it.inPlanning!! || it.isClosed!!
                         })
-                        mapView.getMapAsync({ mapView ->
-                            response?.body()?.data!!.filterNot { location -> location.inPlanning!! || location.isClosed!! }.map {
-                                location ->
+                        mapView.getMapAsync {
+                            mapView ->
+                            response?.body()?.data?.filterNot {
+                                it.inPlanning ?: true || it.isClosed ?: true
+                            }?.forEach {
                                 mapView.addMarker(MarkerOptions()
-                                        .position(LatLng(location.latitude?.toDouble()!!, location.longitude?.toDouble()!!))
-                                        .title(location.name)
-                                        .snippet(location.streetAddress))
+                                        .position(LatLng(it.latitude?.toDouble() ?: 0.0, it.longitude?.toDouble() ?: 0.0))
+                                        .title(it.id)
+                                        .icon(markerIcon))
                             }
-                        })
+                        }
                     }
 
                     override fun onFailure(call: Call<ResultPage<Location>>?, throwable: Throwable?) {
                         //TODO
                     }
                 })
+    }
+
+    fun selectMarker(marker: Marker?) {
+        selectedMarker?.setIcon(markerIcon)
+        selectedMarker = marker
+        
+        val location = if (marker != null) locationAdapter.findById(marker.title) else null
+        if (marker != null && location != null) {
+            marker.setIcon(selectedMarkerIcon)
+            markerLocationView.bind(location)
+            markerLocationView.visibility = View.VISIBLE
+        } else {
+            markerLocationView.visibility = View.GONE
+        }
+    }
+
+    fun openDetailsActivity(location: Location?) {
+        val locationParcel = LocationParcel.wrap(location)
+        val intent = Intent(activity, LocationDetailsActivity::class.java)
+        intent.putExtra("location", locationParcel)
+        startActivity(intent)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        markerIcon = getBitmapDescriptor(R.drawable.ic_marker_28dp)
+        selectedMarkerIcon = getBitmapDescriptor(R.drawable.ic_marker_selected_36dp)
     }
 
     override fun onResume() {
@@ -162,12 +208,24 @@ class NearbyBreweriesFragment : Fragment() {
         when (requestCode) {
             PERMISSIONS_LOCATION -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mapView.getMapAsync({ mapView ->
-                        mapView.isMyLocationEnabled = true
-                        mapView.uiSettings.isMyLocationButtonEnabled = false
-                    })
+                    mapView.getMapAsync {
+                        it.isMyLocationEnabled = true
+                    }
                 }
             }
         }
+    }
+
+    //TODO better caching of result
+    fun getBitmapDescriptor(id: Int): BitmapDescriptor {
+        val density = resources.displayMetrics.density
+        val vectorDrawable = ContextCompat.getDrawable(context, id)
+        val h = vectorDrawable.intrinsicHeight * density
+        val w = vectorDrawable.intrinsicWidth * density
+        vectorDrawable.setBounds(0, 0, w.toInt(), h.toInt())
+        val bm = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bm)
+        vectorDrawable.draw(canvas)
+        return BitmapDescriptorFactory.fromBitmap(bm)
     }
 }

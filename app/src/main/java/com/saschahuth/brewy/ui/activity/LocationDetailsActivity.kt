@@ -8,6 +8,7 @@ import com.saschahuth.brewy.BuildConfig
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
+import com.saschahuth.brewy.util.getFormattedAddress
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_location_details.*
 import uk.co.chrisjenx.calligraphy.TypefaceUtils
@@ -32,7 +33,7 @@ class LocationDetailsActivity : BaseActivity() {
             collapsingToolbar.setExpandedTitleTypeface(headlineTypeface)
 
             description.text = location?.brewery?.description
-            address.text = location?.streetAddress + "\n" + location?.postalCode + " " + location?.locality + "\n" + location?.country?.displayName
+            address.text = location?.getFormattedAddress("\n")
 
             val matrix = ColorMatrix();
             matrix.setSaturation(0F);

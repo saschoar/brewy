@@ -11,4 +11,5 @@
     <color name="imagePlaceholder">#eee</color>
     <color name="filterBackground">#eee</color>
     <color name="navigationBarBackground">#ccc</color>
+    <color name="defaultBackground">#fbfbfb</color>
 </resources>

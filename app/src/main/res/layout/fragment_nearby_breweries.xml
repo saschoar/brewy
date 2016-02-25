@@ -111,6 +111,15 @@
             android:layout_height="match_parent"
             android:visibility="invisible" />
 
+        <com.saschahuth.brewy.ui.view.LocationItemView
+            android:id="@+id/markerLocationView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/defaultBackground"
+            android:elevation="1dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
