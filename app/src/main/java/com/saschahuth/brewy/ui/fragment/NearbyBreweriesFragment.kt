@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
@@ -20,10 +21,9 @@ import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
-import com.saschahuth.brewy.ui.adapter.LocationAdapter
+import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
 import com.saschahuth.brewy.util.requestLocationPermission
-import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
 import kotlinx.android.synthetic.main.view_drag_header.*
 import kotlinx.android.synthetic.main.view_drag_header.view.*
@@ -34,7 +34,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils
 
 class NearbyBreweriesFragment : Fragment() {
 
-    private val locationAdapter: LocationAdapter by lazy { LocationAdapter(activity) }
+    private val locationAdapter: ItemAdapter by lazy { ItemAdapter(activity) }
 
     private val PERMISSIONS_LOCATION = 0
 
@@ -65,18 +65,15 @@ class NearbyBreweriesFragment : Fragment() {
             isSortingByName = isSortingByName.not()
         }
 
-        listView.addHeaderView(header, null, false)
-
-        slidingLayout.setPanelSlideListener(object : SlidingUpPanelLayout.SimplePanelSlideListener() {
-
-            override fun onPanelExpanded(panel: View?) {
-                super.onPanelExpanded(panel)
-                selectMarker(null)
-                slidingLayout.anchorPoint = 1.toFloat()
+        val behavior = BottomSheetBehavior.from(recyclerView)
+        behavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(view: View, offset: Float) {
             }
 
-            override fun onPanelCollapsed(panel: View?) {
-                super.onPanelCollapsed(panel)
+            override fun onStateChanged(view: View, state: Int) {
+                when (state) {
+                    BottomSheetBehavior.STATE_EXPANDED -> selectMarker(null)
+                }
             }
 
         })
@@ -120,16 +117,11 @@ class NearbyBreweriesFragment : Fragment() {
             }
         }
 
-        listView.adapter = locationAdapter
-
-        listView.setOnItemClickListener {
-            adapterView, view, i, l ->
-            openDetailsActivity(adapterView.adapter.getItem(i) as Location)
-        }
+        recyclerView.adapter = locationAdapter
 
         listMapSwitch.setOnCheckedChangeListener {
             button, b ->
-            listView.visibility = if (b) View.VISIBLE else View.INVISIBLE
+            recyclerView.visibility = if (b) View.VISIBLE else View.INVISIBLE
             mapView.visibility = if (b) View.INVISIBLE else View.VISIBLE
             CalligraphyUtils.applyFontToTextView(activity, listLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
             CalligraphyUtils.applyFontToTextView(activity, mapLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
@@ -159,7 +151,7 @@ class NearbyBreweriesFragment : Fragment() {
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         locationAdapter.addAll(response?.body()?.data?.filterNot {
                             it.inPlanning!! || it.isClosed!!
-                        })
+                        }!!)
                         mapView.getMapAsync {
                             mapView ->
                             response?.body()?.data?.filterNot {
