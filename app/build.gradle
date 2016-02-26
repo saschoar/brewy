@@ -1,3 +1,5 @@
+import groovy.transform.Field
+
 buildscript {
     ext.kotlin_version = '1.0.0'
     repositories {
@@ -34,10 +36,10 @@ android {
         versionCode 1
         versionName '1.0'
 
-        buildConfigField "String", "BREWERY_DB_API_KEY", "\"$breweryDbApiKey\""
-        buildConfigField "String", "GOOGLE_MAPS_API_KEY", "\"$googleMapsApiKey\""
-        resValue "string", "breweryDbApiKey", "\"$breweryDbApiKey\""
-        resValue "string", "googleMapsApiKey", "\"$googleMapsApiKey\""
+        buildConfigField "String", breweryDbApiKeyName, breweryDbApiKey
+        buildConfigField "String", googleMapsApiKeyName, googleMapsApiKey
+        resValue "string", breweryDbApiKeyResourceName, breweryDbApiKey
+        resValue "string", googleMapsApiKeyResourceName, googleMapsApiKey
     }
     buildTypes {
         release {
@@ -67,4 +69,37 @@ dependencies {
     compile 'com.sothree.slidinguppanel:library:3.2.1'
     compile 'com.github.grandstaish.paperparcel:paperparcel:1.0.0-beta1'
     kapt 'com.github.grandstaish.paperparcel:compiler:1.0.0-beta1'
+}
+
+@Field
+String brewyPropertiesLocation = "brewy.properties",
+       breweryDbApiKeyName = "GOOGLE_MAPS_API_KEY",
+       googleMapsApiKeyName = "BREWERY_DB_API_KEY",
+       breweryDbApiKeyResourceName = "breweryDbApiKey",
+       googleMapsApiKeyResourceName = "googleMapsApiKey"
+
+private checkBrewyProperties() {
+    new File(brewyPropertiesLocation).exists()
+}
+
+private Properties loadBrewyProperties() {
+    Properties props = new Properties()
+    props.load(new FileInputStream(brewyPropertiesLocation))
+    props
+}
+
+def getBreweryDbApiKey() {
+    if (checkBrewyProperties()) {
+        Properties props = loadBrewyProperties()
+        return props[breweryDbApiKeyName]
+    }
+    "null"
+}
+
+def getGoogleMapsApiKey() {
+    if (checkBrewyProperties()) {
+        Properties props = loadBrewyProperties()
+        return props[googleMapsApiKeyName]
+    }
+    "null"
 }

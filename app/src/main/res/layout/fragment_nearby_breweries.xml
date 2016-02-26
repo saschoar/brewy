@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/slidingLayout"
+    android:id="@+id/coordinatorLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
-    sothree:umanoAnchorPoint="0.66"
-    sothree:umanoClipPanel="true"
-    sothree:umanoDragView="@+id/dragView"
-    sothree:umanoFadeColor="@android:color/transparent"
-    sothree:umanoInitialState="anchored"
-    sothree:umanoOverlay="false"
-    sothree:umanoPanelHeight="?attr/actionBarSize"
-    sothree:umanoParallaxOffset="200dp"
-    sothree:umanoScrollableView="@+id/listView"
-    sothree:umanoShadowHeight="4dp"
     tools:ignore="MissingPrefix">
 
     <FrameLayout
@@ -115,21 +105,18 @@
             tools:visibility="visible" />
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/dragView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:background="@color/defaultBackground"
+        android:clipToPadding="false"
+        android:divider="@null"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="?attr/actionBarSize"
+        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
+        tools:listitem="@layout/item_brewery" />
 
-        <ListView
-            android:id="@+id/listView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:divider="@null"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbars="vertical"
-            tools:listitem="@layout/item_brewery" />
-    </FrameLayout>
-
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+</android.support.design.widget.CoordinatorLayout>

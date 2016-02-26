@@ -2,82 +2,71 @@ package com.saschahuth.brewy.ui.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
-import com.squareup.picasso.Picasso
+import com.saschahuth.brewy.ui.view.LocationItemView
+import com.saschahuth.brewy.util.distanceTo
+import java.util.*
 
 /**
  * Created by sascha on 17.02.16.
  */
 
-class ItemAdapter(list: List<Location>?, context: Context) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val list = list
+    val list = ArrayList<Location>()
+    val context = context
 
-    val layoutInflater: LayoutInflater by lazy { LayoutInflater.from(context) }
+    override fun onCreateViewHolder(viewGroup: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
+        val view = LocationItemView(context)
+        return object : RecyclerView.ViewHolder(view) {
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup?, viewType: Int): ItemAdapter.ViewHolder? {
-        val view = layoutInflater.inflate(R.layout.item_brewery, viewGroup, false)
-        return ViewHolder(view)
+        }
     }
 
     override fun getItemCount(): Int {
         return if (list == null) 0 else list.size
     }
 
-    override fun onBindViewHolder(viewHolder: ItemAdapter.ViewHolder?, position: Int) {
+    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder?, position: Int) {
         val location: Location? = list?.get(position)
-
         if (location != null) {
-            viewHolder?.title?.text = location.brewery?.name + if (location.name == "Main Brewery") "" else " (" + location.name + ")" //TODO just for testing
-            viewHolder?.address?.text = location.streetAddress + ", " + location.postalCode + " " + location.locality
-            viewHolder?.distance?.text = distanceBetween(
-                    40.024925,
-                    -83.0038657,
-                    location.latitude?.toDouble(),
-                    location.longitude?.toDouble())
-                    .toInt().toString() + " m away" //TODO just for testing
-            val uriString: String? = location.brewery?.images?.squareMedium
-            if (uriString != null) {
-                Picasso.with(viewHolder?.image?.context).load(uriString).into(viewHolder?.image)
-            } else {
-                Picasso.with(viewHolder?.image?.context).cancelRequest(viewHolder?.image)
-                viewHolder?.image?.setBackgroundColor(R.color.textLight)
+            (viewHolder?.itemView as LocationItemView).bind(location)
+        }
+    }
+
+    fun add(toAdd: Location) {
+        list?.add(toAdd)
+        notifyDataSetChanged()
+    }
+
+    fun addAll(toAdd: List<Location>) {
+        list?.addAll(toAdd)
+        notifyDataSetChanged()
+    }
+
+    fun findById(id: String): Location? {
+        try {
+            val count = list?.size ?: 0
+            for (i in 0..count) {
+                val location = list?.get(i)
+                if (location?.id == id) return location
             }
-            viewHolder?.title?.text = location.name
+        } catch(e: IndexOutOfBoundsException) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    fun sortByName() {
+        list?.sortBy {
+            it.brewery?.name?.toLowerCase()
         }
     }
 
-    fun distanceBetween(latitude1: Double?, longitude1: Double?, latitude2: Double?, longitude2: Double?): Float {
-        if (latitude1 == null || latitude2 == null || longitude1 == null || longitude2 == null) {
-            return 0F
-        } else {
-            val location1 = android.location.Location("")
-            location1.latitude = latitude1
-            location1.longitude = longitude1
-            val location2 = android.location.Location("")
-            location2.latitude = latitude2
-            location2.longitude = longitude2
-            return location1.distanceTo(location2)
-        }
-    }
-
-    class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val image: ImageView
-        val title: TextView
-        val address: TextView
-        val distance: TextView
-
-        init {
-            image = view.findViewById(R.id.image) as ImageView
-            title = view.findViewById(R.id.title) as TextView
-            address = view.findViewById(R.id.address) as TextView
-            distance = view.findViewById(R.id.distance) as TextView
+    fun sortByDistance() {
+        list?.sortBy {
+            it.distanceTo(40.024925, -83.0038657)
         }
     }
 
