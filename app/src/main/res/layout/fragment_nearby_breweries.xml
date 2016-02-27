@@ -109,12 +109,20 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+<<<<<<< HEAD
+=======
+        android:background="@color/defaultBackground"
+>>>>>>> origin/master
         android:clipToPadding="false"
         android:divider="@null"
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
         app:behavior_hideable="false"
+<<<<<<< HEAD
         app:behavior_peekHeight="260px"
+=======
+        app:behavior_peekHeight="?attr/actionBarSize"
+>>>>>>> origin/master
         app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
         tools:listitem="@layout/item_brewery" />
 
