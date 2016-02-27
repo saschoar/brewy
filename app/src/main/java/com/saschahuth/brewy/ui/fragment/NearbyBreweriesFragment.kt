@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
-import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
@@ -25,11 +24,9 @@ import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
-import com.saschahuth.brewy.util.logDebug
 import com.saschahuth.brewy.util.requestLocationPermission
+import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
-import kotlinx.android.synthetic.main.view_drag_header.*
-import kotlinx.android.synthetic.main.view_drag_header.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -57,11 +54,11 @@ class NearbyBreweriesFragment : Fragment() {
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val header = LayoutInflater.from(activity).inflate(R.layout.view_drag_header, null)
+        // val header = LayoutInflater.from(activity).inflate(R.layout.view_drag_header, null)
 
         recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
 
-        header.sort.setOnClickListener {
+        sort.setOnClickListener {
             if (isSortingByName) {
                 itemAdapter.sortByDistance()
                 sort.text = "Sorted by Distance"
@@ -72,27 +69,24 @@ class NearbyBreweriesFragment : Fragment() {
             isSortingByName = isSortingByName.not()
         }
 
-        val behavior = BottomSheetBehavior.from(recyclerView)
-        behavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(view: View, offset: Float) {
-                logDebug(offset)
+        headerHelper.setOnTouchListener {
+            view, motionEvent ->
+            mapView?.dispatchTouchEvent(motionEvent) ?: false
+        }
+
+        slidingLayout.setPanelSlideListener(object : SlidingUpPanelLayout.SimplePanelSlideListener() {
+            override fun onPanelExpanded(panel: View?) {
+                super.onPanelExpanded(panel)
+                selectMarker(null)
+                slidingLayout.isTouchEnabled = true
+                headerHelper.visibility = View.GONE
             }
 
-            override fun onStateChanged(view: View, state: Int) {
-                when (state) {
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        selectMarker(null)
-                        view.setOnTouchListener(null)
-                    }
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        view.setOnTouchListener {
-                            view, motionEvent ->
-                            mapView?.dispatchTouchEvent(motionEvent) ?: false
-                        }
-                    }
-                }
+            override fun onPanelCollapsed(panel: View?) {
+                super.onPanelCollapsed(panel)
+                slidingLayout.isTouchEnabled = false
+                headerHelper.visibility = View.VISIBLE
             }
-
         })
 
         mapView = view?.findViewById(R.id.mapView) as MapView

@@ -23,7 +23,7 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
 
     val header: View by lazy {
         val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200)
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 140)
         view
     }
 

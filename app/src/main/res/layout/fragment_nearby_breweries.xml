@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinatorLayout"
+    android:id="@+id/slidingLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="bottom"
+    app:umanoDragView="@+id/dragView"
+    app:umanoFadeColor="@color/colorPrimarySemi"
+    app:umanoInitialState="expanded"
+    app:umanoOverlay="true"
+    app:umanoPanelHeight="260px"
+    app:umanoParallaxOffset="200dp"
+    app:umanoScrollableView="@+id/recyclerView"
+    app:umanoShadowHeight="0dp"
     tools:ignore="MissingPrefix">
 
     <FrameLayout
+        android:id="@+id/mapWrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -94,7 +103,7 @@
             android:id="@+id/mapView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="60px" />
+            android:layout_marginBottom="?attr/actionBarSize" />
 
         <com.saschahuth.brewy.ui.view.LocationItemView
             android:id="@+id/markerLocationView"
@@ -103,19 +112,84 @@
             android:elevation="1dp"
             android:visibility="gone"
             tools:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/filterBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/filterBackground"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:ignore="MissingPrefix">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin"
+                android:gravity="center_vertical"
+                android:text="List"
+                android:textAllCaps="true"
+                android:textColor="@color/textDefault" />
+
+            <android.support.v4.widget.Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/sort"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawableLeft="@drawable/ic_sort_24dp"
+                android:drawablePadding="@dimen/marginTiny"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:paddingLeft="@dimen/margin"
+                android:paddingRight="@dimen/margin"
+                android:text="Sorted by Distance"
+                android:textAllCaps="true"
+                android:textSize="@dimen/textSizeSmall" />
+        </LinearLayout>
     </FrameLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <LinearLayout
+        android:id="@+id/dragView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:divider="@null"
-        android:scrollbarStyle="outsideOverlay"
-        android:scrollbars="vertical"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="260px"
-        app:layout_behavior="android.support.design.widget.BottomSheetBehavior"
-        tools:listitem="@layout/item_brewery" />
+        android:clickable="true"
+        android:focusable="false"
+        android:orientation="vertical">
 
-</android.support.design.widget.CoordinatorLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="60dp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:divider="@null"
+                android:scrollbarStyle="outsideOverlay"
+                android:scrollbars="vertical"
+                tools:listitem="@layout/item_brewery" />
+
+            <View
+                android:id="@+id/headerHelper"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_width="match_parent"
+                android:layout_height="140px"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>
