@@ -130,6 +130,7 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
         list.sortBy {
             it.brewery?.name?.toLowerCase()
         }
+        notifyDataSetChanged()
     }
 
 >>>>>>> origin/master
@@ -137,6 +138,7 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
         list.sortBy {
             it.distanceTo(40.024925, -83.0038657)
         }
+        notifyDataSetChanged()
     }
 
     fun setOnHeaderTouchListener(onTouchListener: View.OnTouchListener?) {
