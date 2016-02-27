@@ -30,6 +30,10 @@ class LocationItemView : FrameLayout {
 
     init {
         LayoutInflater.from(context).inflate(R.layout.item_brewery, this, true)
+
+        setOnClickListener {
+            openDetailsActivity(boundLocation)
+        }
     }
 
     fun bind(location: Location) {
@@ -44,10 +48,6 @@ class LocationItemView : FrameLayout {
         } else {
             Picasso.with(context).cancelRequest(image)
             image.setImageResource(R.color.imagePlaceholder)
-        }
-
-        setOnClickListener {
-            openDetailsActivity(boundLocation)
         }
     }
 
