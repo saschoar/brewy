@@ -2,6 +2,7 @@ package com.saschahuth.brewy.ui.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.view.ViewGroup
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.ui.view.LocationItemView
@@ -17,21 +18,36 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
     val list = ArrayList<Location>()
     val context = context
 
+    val VIEW_TYPE_HEADER = 0
+    val VIEW_TYPE_ITEM = 1
+
+    val header: View by lazy {
+        val view = View(context)
+        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 200)
+        view
+    }
+
     override fun onCreateViewHolder(viewGroup: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-        val view = LocationItemView(context)
+        val view = if (viewType == VIEW_TYPE_HEADER) header else LocationItemView(context)
         return object : RecyclerView.ViewHolder(view) {
 
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (position == 0) VIEW_TYPE_HEADER else VIEW_TYPE_ITEM
+    }
+
     override fun getItemCount(): Int {
-        return list.size
+        return list.size + 1
     }
 
     override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder?, position: Int) {
-        val location: Location? = list[position]
-        if (location != null) {
-            (viewHolder?.itemView as LocationItemView).bind(location)
+        if (getItemViewType(position) == VIEW_TYPE_ITEM) {
+            val location: Location? = list[position - 1]
+            if (location != null) {
+                (viewHolder?.itemView as LocationItemView).bind(location)
+            }
         }
     }
 
@@ -68,6 +84,10 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
         list.sortBy {
             it.distanceTo(40.024925, -83.0038657)
         }
+    }
+
+    fun setOnHeaderTouchListener(onTouchListener: View.OnTouchListener?) {
+        header.setOnTouchListener(onTouchListener)
     }
 
 }

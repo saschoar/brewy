@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.item_brewery.view.*
 /**
  * Created by sascha on 24.02.16.
  */
-class LocationItemView : FrameLayout {
+class LocationItemView : RelativeLayout {
 
     var boundLocation: Location? = null
 
@@ -29,6 +29,7 @@ class LocationItemView : FrameLayout {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     init {
+        setBackgroundResource(R.color.defaultBackground)
         LayoutInflater.from(context).inflate(R.layout.item_brewery, this, true)
 
         setOnClickListener {

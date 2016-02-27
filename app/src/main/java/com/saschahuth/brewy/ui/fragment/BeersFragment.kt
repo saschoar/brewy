@@ -39,9 +39,9 @@ class BeersFragment : Fragment() {
 
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
                         val names = response?.body()?.data?.map { location -> location.name }
-                        val filteredItems = response?.body()?.data?.filterNot { location -> location.inPlanning!! || location.isClosed!! }
+                        val filteredItems = response?.body()?.data?.filterNot { location -> location.inPlanning ?: true || location.isClosed ?: true }
                         val itemAdapter = ItemAdapter(activity)
-                        itemAdapter.addAll(filteredItems!!)
+                        itemAdapter.addAll(filteredItems ?: listOf())
                         recyclerView.adapter = itemAdapter
                         logDebug(names)
                     }

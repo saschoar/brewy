@@ -8,11 +8,13 @@ import android.os.Bundle
 import android.support.design.widget.BottomSheetBehavior
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.*
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.Api
@@ -23,6 +25,7 @@ import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
+import com.saschahuth.brewy.util.logDebug
 import com.saschahuth.brewy.util.requestLocationPermission
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
 import kotlinx.android.synthetic.main.view_drag_header.*
@@ -34,11 +37,13 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils
 
 class NearbyBreweriesFragment : Fragment() {
 
-    private val locationAdapter: ItemAdapter by lazy { ItemAdapter(activity) }
+    private val itemAdapter: ItemAdapter by lazy { ItemAdapter(activity) }
 
     private val PERMISSIONS_LOCATION = 0
 
     private var isSortingByName: Boolean = false
+
+    var mapView: MapView? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_nearby_breweries, container, false)
@@ -54,12 +59,14 @@ class NearbyBreweriesFragment : Fragment() {
 
         val header = LayoutInflater.from(activity).inflate(R.layout.view_drag_header, null)
 
+        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
+
         header.sort.setOnClickListener {
             if (isSortingByName) {
-                locationAdapter.sortByDistance()
+                itemAdapter.sortByDistance()
                 sort.text = "Sorted by Distance"
             } else {
-                locationAdapter.sortByName()
+                itemAdapter.sortByName()
                 sort.text = "Sorted by Name"
             }
             isSortingByName = isSortingByName.not()
@@ -68,19 +75,30 @@ class NearbyBreweriesFragment : Fragment() {
         val behavior = BottomSheetBehavior.from(recyclerView)
         behavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(view: View, offset: Float) {
+                logDebug(offset)
             }
 
             override fun onStateChanged(view: View, state: Int) {
                 when (state) {
-                    BottomSheetBehavior.STATE_EXPANDED -> selectMarker(null)
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        selectMarker(null)
+                        view.setOnTouchListener(null)
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+                        view.setOnTouchListener {
+                            view, motionEvent ->
+                            mapView?.dispatchTouchEvent(motionEvent) ?: false
+                        }
+                    }
                 }
             }
 
         })
 
-        mapView.onCreate(savedInstanceState)
+        mapView = view?.findViewById(R.id.mapView) as MapView
+        mapView?.onCreate(savedInstanceState)
 
-        mapView.getMapAsync {
+        mapView?.getMapAsync {
             it.uiSettings.isMyLocationButtonEnabled = false
             it.setOnMarkerClickListener {
                 selectMarker(it)
@@ -96,13 +114,13 @@ class NearbyBreweriesFragment : Fragment() {
         }
 
         myLocation.setOnClickListener {
-            mapView.getMapAsync {
+            mapView?.getMapAsync {
                 it.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
             }
         }
 
         layers.setOnClickListener {
-            mapView.getMapAsync {
+            mapView?.getMapAsync {
                 it.mapType = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
                 layers.text = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) "Streets" else "Hybrid"
             }
@@ -111,18 +129,18 @@ class NearbyBreweriesFragment : Fragment() {
         if (!activity.hasLocationPermission()) {
             activity.requestLocationPermission(PERMISSIONS_LOCATION)
         } else {
-            mapView.getMapAsync {
+            mapView?.getMapAsync {
                 it.isMyLocationEnabled = true
                 it.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
             }
         }
 
-        recyclerView.adapter = locationAdapter
+        recyclerView.adapter = itemAdapter
 
         listMapSwitch.setOnCheckedChangeListener {
             button, b ->
             recyclerView.visibility = if (b) View.VISIBLE else View.INVISIBLE
-            mapView.visibility = if (b) View.INVISIBLE else View.VISIBLE
+            mapView?.visibility = if (b) View.INVISIBLE else View.VISIBLE
             CalligraphyUtils.applyFontToTextView(activity, listLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
             CalligraphyUtils.applyFontToTextView(activity, mapLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
             myLocation.visibility = if (b) View.GONE else View.VISIBLE
@@ -149,15 +167,15 @@ class NearbyBreweriesFragment : Fragment() {
                 .enqueue(object : Callback<ResultPage<Location>> {
 
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
-                        locationAdapter.addAll(response?.body()?.data?.filterNot {
+                        itemAdapter.addAll(response?.body()?.data?.filterNot {
                             it.inPlanning!! || it.isClosed!!
                         }!!)
-                        mapView.getMapAsync {
+                        mapView?.getMapAsync {
                             mapView ->
                             response?.body()?.data?.filterNot {
                                 it.inPlanning ?: true || it.isClosed ?: true
                             }?.forEach {
-                                mapView.addMarker(MarkerOptions()
+                                mapView?.addMarker(MarkerOptions()
                                         .position(LatLng(it.latitude?.toDouble() ?: 0.0, it.longitude?.toDouble() ?: 0.0))
                                         .title(it.id)
                                         .icon(markerIcon))
@@ -175,7 +193,7 @@ class NearbyBreweriesFragment : Fragment() {
         selectedMarker?.setIcon(markerIcon)
         selectedMarker = marker
 
-        val location = if (marker != null) locationAdapter.findById(marker.title) else null
+        val location = if (marker != null) itemAdapter.findById(marker.title) else null
         if (marker != null && location != null) {
             marker.setIcon(selectedMarkerIcon)
             markerLocationView.bind(location)
@@ -200,29 +218,34 @@ class NearbyBreweriesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        mapView.onResume()
+        mapView?.onResume()
     }
 
     override fun onPause() {
         super.onPause()
-        mapView.onPause()
+        mapView?.onPause()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onDestroy() {
+        super.onDestroy()
         mapView?.onDestroy()
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        mapView?.onLowMemory()
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
-        mapView.onSaveInstanceState(outState!!)
+        mapView?.onSaveInstanceState(outState)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             PERMISSIONS_LOCATION -> {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    mapView.getMapAsync {
+                    mapView?.getMapAsync {
                         it.isMyLocationEnabled = true
                     }
                 }
