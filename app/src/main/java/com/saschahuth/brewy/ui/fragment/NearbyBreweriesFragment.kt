@@ -33,16 +33,11 @@ import kotlinx.android.synthetic.main.view_drag_header.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.http.HEAD
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils
 
 class NearbyBreweriesFragment : Fragment() {
 
-<<<<<<< HEAD
     private val itemAdapter: ItemAdapter by lazy { ItemAdapter(activity) }
-=======
-    private val locationAdapter: ItemAdapter by lazy { ItemAdapter(activity) }
->>>>>>> origin/master
 
     private val PERMISSIONS_LOCATION = 0
 
@@ -80,15 +75,11 @@ class NearbyBreweriesFragment : Fragment() {
         val behavior = BottomSheetBehavior.from(recyclerView)
         behavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(view: View, offset: Float) {
-<<<<<<< HEAD
                 logDebug(offset)
-=======
->>>>>>> origin/master
             }
 
             override fun onStateChanged(view: View, state: Int) {
                 when (state) {
-<<<<<<< HEAD
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         selectMarker(null)
                         view.setOnTouchListener(null)
@@ -99,9 +90,6 @@ class NearbyBreweriesFragment : Fragment() {
                             mapView?.dispatchTouchEvent(motionEvent) ?: false
                         }
                     }
-=======
-                    BottomSheetBehavior.STATE_EXPANDED -> selectMarker(null)
->>>>>>> origin/master
                 }
             }
 
@@ -147,20 +135,12 @@ class NearbyBreweriesFragment : Fragment() {
             }
         }
 
-<<<<<<< HEAD
         recyclerView.adapter = itemAdapter
-=======
-        recyclerView.adapter = locationAdapter
->>>>>>> origin/master
 
         listMapSwitch.setOnCheckedChangeListener {
             button, b ->
             recyclerView.visibility = if (b) View.VISIBLE else View.INVISIBLE
-<<<<<<< HEAD
             mapView?.visibility = if (b) View.INVISIBLE else View.VISIBLE
-=======
-            mapView.visibility = if (b) View.INVISIBLE else View.VISIBLE
->>>>>>> origin/master
             CalligraphyUtils.applyFontToTextView(activity, listLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
             CalligraphyUtils.applyFontToTextView(activity, mapLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
             myLocation.visibility = if (b) View.GONE else View.VISIBLE
@@ -190,11 +170,7 @@ class NearbyBreweriesFragment : Fragment() {
                         itemAdapter.addAll(response?.body()?.data?.filterNot {
                             it.inPlanning!! || it.isClosed!!
                         }!!)
-<<<<<<< HEAD
                         mapView?.getMapAsync {
-=======
-                        mapView.getMapAsync {
->>>>>>> origin/master
                             mapView ->
                             response?.body()?.data?.filterNot {
                                 it.inPlanning ?: true || it.isClosed ?: true

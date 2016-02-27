@@ -2,10 +2,7 @@ package com.saschahuth.brewy.ui.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-<<<<<<< HEAD
 import android.view.View
-=======
->>>>>>> origin/master
 import android.view.ViewGroup
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.ui.view.LocationItemView
@@ -21,7 +18,6 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
     val list = ArrayList<Location>()
     val context = context
 
-<<<<<<< HEAD
     val VIEW_TYPE_HEADER = 0
     val VIEW_TYPE_ITEM = 1
 
@@ -74,58 +70,10 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
             }
         } catch(e: IndexOutOfBoundsException) {
             e.printStackTrace()
-=======
-    override fun onCreateViewHolder(viewGroup: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-        val view = LocationItemView(context)
-        return object : RecyclerView.ViewHolder(view) {
-
-        }
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
-    override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder?, position: Int) {
-        val location: Location? = list[position]
-        if (location != null) {
-            (viewHolder?.itemView as LocationItemView).bind(location)
->>>>>>> origin/master
         }
         return null
     }
 
-<<<<<<< HEAD
-    fun sortByName() {
-        list.sortBy {
-            it.brewery?.name?.toLowerCase()
-=======
-    fun add(toAdd: Location) {
-        list.add(toAdd)
-        notifyDataSetChanged()
-    }
-
-    fun addAll(toAdd: List<Location>) {
-        list.addAll(toAdd)
-        notifyDataSetChanged()
-    }
-
-    fun findById(id: String): Location? {
-        try {
-            val count = list.size
-            for (i in 0..count) {
-                val location = list[i]
-                if (location.id == id) return location
-            }
-        } catch(e: IndexOutOfBoundsException) {
-            e.printStackTrace()
->>>>>>> origin/master
-        }
-        return null
-    }
-
-<<<<<<< HEAD
-=======
     fun sortByName() {
         list.sortBy {
             it.brewery?.name?.toLowerCase()
@@ -133,7 +81,6 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
         notifyDataSetChanged()
     }
 
->>>>>>> origin/master
     fun sortByDistance() {
         list.sortBy {
             it.distanceTo(40.024925, -83.0038657)

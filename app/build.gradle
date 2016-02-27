@@ -73,8 +73,8 @@ dependencies {
 
 @Field
 String brewyPropertiesLocation = "brewy.properties",
-       breweryDbApiKeyName = "GOOGLE_MAPS_API_KEY",
-       googleMapsApiKeyName = "BREWERY_DB_API_KEY",
+       breweryDbApiKeyName = "BREWERY_DB_API_KEY",
+       googleMapsApiKeyName = "GOOGLE_MAPS_API_KEY",
        breweryDbApiKeyResourceName = "breweryDbApiKey",
        googleMapsApiKeyResourceName = "googleMapsApiKey"
 
