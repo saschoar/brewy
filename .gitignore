@@ -1,6 +1,6 @@
 *.iml
 .gradle
-brewy.properties
+/brewy.properties
 /local.properties
 /.idea
 .DS_Store
