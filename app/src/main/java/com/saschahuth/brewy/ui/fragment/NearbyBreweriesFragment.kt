@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.view_drag_header.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.HEAD
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils
 
 class NearbyBreweriesFragment : Fragment() {
