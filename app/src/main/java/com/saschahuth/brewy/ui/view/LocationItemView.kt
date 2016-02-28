@@ -1,10 +1,15 @@
 package com.saschahuth.brewy.ui.view
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.support.v4.app.ActivityCompat
+import android.support.v4.app.ActivityOptionsCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.RelativeLayout
+import com.bumptech.glide.Glide
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
@@ -12,7 +17,6 @@ import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.util.distanceTo
 import com.saschahuth.brewy.util.getFormattedAddress
 import com.saschahuth.brewy.util.getFormattedName
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_brewery.view.*
 
 /**
@@ -45,9 +49,9 @@ class LocationItemView : RelativeLayout {
         distance.text = "${location.distanceTo(40.024925, -83.0038657).toInt()} m away" //TODO just for testing
         val uriString = location.brewery?.images?.squareMedium
         if (uriString != null) {
-            Picasso.with(context).load(uriString).into(image)
+            Glide.with(context).load(uriString).into(image)
         } else {
-            Picasso.with(context).cancelRequest(image)
+            Glide.clear(image);
             image.setImageResource(R.color.imagePlaceholder)
         }
     }
@@ -56,6 +60,14 @@ class LocationItemView : RelativeLayout {
         val locationParcel = LocationParcel.wrap(location)
         val intent = Intent(context, LocationDetailsActivity::class.java)
         intent.putExtra("location", locationParcel)
-        context.startActivity(intent)
+
+        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                // the context of the activity
+                context as Activity,
+                android.support.v4.util.Pair<View, String>(image,
+                        context.getString(R.string.transitionNameCircle))
+        )
+
+        ActivityCompat.startActivity(context as Activity, intent, options.toBundle())
     }
 }

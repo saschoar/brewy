@@ -15,8 +15,8 @@
     <!-- image sizes -->
     <dimen name="listItemImageWidth">64dp</dimen>
     <dimen name="listItemImageHeight">64dp</dimen>
-    <dimen name="detailImageWidth">128dp</dimen>
-    <dimen name="detailImageHeight">128dp</dimen>
+    <dimen name="detailImageWidth">96dp</dimen>
+    <dimen name="detailImageHeight">96dp</dimen>
 
     <!-- sliding panel values -->
     <dimen name="peekFilterBarHeight">60dp</dimen>

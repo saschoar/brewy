@@ -1,6 +1,5 @@
 package com.saschahuth.brewy.ui.fragment
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -20,9 +19,7 @@ import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.Api
 import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
 import com.saschahuth.brewy.domain.brewerydb.model.Location
-import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
-import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
 import com.saschahuth.brewy.util.logDebug
@@ -149,10 +146,6 @@ class NearbyBreweriesFragment : Fragment() {
             }
         }
 
-        markerLocationView.setOnClickListener {
-            openDetailsActivity(markerLocationView.boundLocation)
-        }
-
         myLocation.setOnClickListener {
             mapView?.getMapAsync {
                 it.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
@@ -241,13 +234,6 @@ class NearbyBreweriesFragment : Fragment() {
         } else {
             markerLocationView.visibility = View.GONE
         }
-    }
-
-    fun openDetailsActivity(location: Location?) {
-        val locationParcel = LocationParcel.wrap(location)
-        val intent = Intent(activity, LocationDetailsActivity::class.java)
-        intent.putExtra("location", locationParcel)
-        startActivity(intent)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
