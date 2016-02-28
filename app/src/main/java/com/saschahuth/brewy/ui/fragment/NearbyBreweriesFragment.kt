@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,7 @@ import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
+import com.saschahuth.brewy.util.logDebug
 import com.saschahuth.brewy.util.requestLocationPermission
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
@@ -34,7 +36,10 @@ import uk.co.chrisjenx.calligraphy.CalligraphyUtils
 
 class NearbyBreweriesFragment : Fragment() {
 
-    private val itemAdapter: ItemAdapter by lazy { ItemAdapter(activity) }
+    private val itemAdapter: ItemAdapter by lazy { ItemAdapter(activity, peekHeaderHeight) }
+    private val peekFilterBarHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekFilterBarHeight) }
+    private val peekHeaderHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekHeaderHeight) }
+    private val peekTotalHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekTotalHeight) }
 
     private val PERMISSIONS_LOCATION = 0
 
@@ -51,41 +56,82 @@ class NearbyBreweriesFragment : Fragment() {
     var markerIcon: BitmapDescriptor? = null
     var selectedMarkerIcon: BitmapDescriptor? = null
 
+    var recyclerViewScrolled = 0
+
+    var canScrollVertically = true
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // val header = LayoutInflater.from(activity).inflate(R.layout.view_drag_header, null)
-
-        recyclerView.layoutManager = LinearLayoutManager(recyclerView.context)
-
-        sort.setOnClickListener {
-            if (isSortingByName) {
-                itemAdapter.sortByDistance()
-                sort.text = "Sorted by Distance"
-            } else {
-                itemAdapter.sortByName()
-                sort.text = "Sorted by Name"
+        recyclerView.layoutManager = object : LinearLayoutManager(recyclerView.context) {
+            override fun canScrollVertically(): Boolean {
+                return super.canScrollVertically() && canScrollVertically
             }
-            isSortingByName = isSortingByName.not()
         }
+
+        filterBar.setOnTouchListener {
+            view, motionEvent ->
+            if (slidingLayout.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
+                slidingLayout.isTouchEnabled = true
+            }
+            false
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                recyclerViewScrolled -= dy
+                filterBar.translationY = Math.max(0, peekHeaderHeight + recyclerViewScrolled).toFloat()
+                slidingLayout.panelHeight = if (recyclerViewScrolled == 0) peekTotalHeight else peekFilterBarHeight
+            }
+        })
+
+        itemAdapter.header.setOnClickListener {
+            slidingLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+        }
+
+        filterBar.setOnClickListener {
+            slidingLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+        }
+        filterBar.isClickable = false
 
         headerHelper.setOnTouchListener {
             view, motionEvent ->
-            mapView?.dispatchTouchEvent(motionEvent) ?: false
+            mapWrapper.dispatchTouchEvent(motionEvent)
         }
 
         slidingLayout.setPanelSlideListener(object : SlidingUpPanelLayout.SimplePanelSlideListener() {
             override fun onPanelExpanded(panel: View?) {
                 super.onPanelExpanded(panel)
                 selectMarker(null)
+                canScrollVertically = true
                 slidingLayout.isTouchEnabled = true
+                filterBar.isClickable = false
+                sortSwitchWrapper.visibility = View.VISIBLE
+            }
+
+            override fun onPanelSlide(panel: View?, slideOffset: Float) {
+                super.onPanelSlide(panel, slideOffset)
+                logDebug(slideOffset)
+
+                if (slidingLayout.panelHeight == peekFilterBarHeight) {
+                    //TODO find better range
+                    filterBar.translationY = Math.max(0, peekHeaderHeight + recyclerViewScrolled).toFloat()
+                }
                 headerHelper.visibility = View.GONE
             }
 
             override fun onPanelCollapsed(panel: View?) {
                 super.onPanelCollapsed(panel)
-                slidingLayout.isTouchEnabled = false
+                slidingLayout.isTouchEnabled = true
+                canScrollVertically = false
+                filterBar.isClickable = true
                 headerHelper.visibility = View.VISIBLE
+                sortSwitchWrapper.visibility = View.GONE
+
+                if (slidingLayout.panelHeight == peekFilterBarHeight) {
+                    filterBar.translationY = 0f
+                }
             }
         })
 
@@ -116,7 +162,6 @@ class NearbyBreweriesFragment : Fragment() {
         layers.setOnClickListener {
             mapView?.getMapAsync {
                 it.mapType = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
-                layers.text = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) "Streets" else "Hybrid"
             }
         }
 
@@ -131,27 +176,24 @@ class NearbyBreweriesFragment : Fragment() {
 
         recyclerView.adapter = itemAdapter
 
-        listMapSwitch.setOnCheckedChangeListener {
+        sortSwitch.setOnCheckedChangeListener {
             button, b ->
-            recyclerView.visibility = if (b) View.VISIBLE else View.INVISIBLE
-            mapView?.visibility = if (b) View.INVISIBLE else View.VISIBLE
-            CalligraphyUtils.applyFontToTextView(activity, listLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
-            CalligraphyUtils.applyFontToTextView(activity, mapLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
-            myLocation.visibility = if (b) View.GONE else View.VISIBLE
-            layers.visibility = if (b) View.GONE else View.VISIBLE
-            sort.visibility = if (b) View.VISIBLE else View.GONE
+            CalligraphyUtils.applyFontToTextView(activity, nameLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
+            CalligraphyUtils.applyFontToTextView(activity, distanceLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
             if (b) {
-                selectMarker(null)
+                itemAdapter.sortByName()
+            } else {
+                itemAdapter.sortByDistance()
             }
         }
 
-        listLabel.setOnTouchListener {
+        nameLabel.setOnTouchListener {
             view, motionEvent ->
-            listMapSwitch.dispatchTouchEvent(motionEvent)
+            sortSwitch.dispatchTouchEvent(motionEvent)
         }
-        mapLabel.setOnTouchListener {
+        distanceLabel.setOnTouchListener {
             view, motionEvent ->
-            listMapSwitch.dispatchTouchEvent(motionEvent)
+            sortSwitch.dispatchTouchEvent(motionEvent)
         }
 
         val breweryDbApi = Api.create()
@@ -161,18 +203,22 @@ class NearbyBreweriesFragment : Fragment() {
                 .enqueue(object : Callback<ResultPage<Location>> {
 
                     override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
-                        itemAdapter.addAll(response?.body()?.data?.filterNot {
-                            it.inPlanning!! || it.isClosed!!
-                        }!!)
-                        mapView?.getMapAsync {
-                            mapView ->
-                            response?.body()?.data?.filterNot {
+                        var data = response?.body()?.data
+
+                        if (data != null) {
+                            itemAdapter.addAll(data.filterNot {
                                 it.inPlanning ?: true || it.isClosed ?: true
-                            }?.forEach {
-                                mapView?.addMarker(MarkerOptions()
-                                        .position(LatLng(it.latitude?.toDouble() ?: 0.0, it.longitude?.toDouble() ?: 0.0))
-                                        .title(it.id)
-                                        .icon(markerIcon))
+                            })
+                            mapView?.getMapAsync {
+                                mapView ->
+                                data.filterNot {
+                                    it.inPlanning ?: true || it.isClosed ?: true
+                                }.forEach {
+                                    mapView?.addMarker(MarkerOptions()
+                                            .position(LatLng(it.latitude?.toDouble() ?: 0.0, it.longitude?.toDouble() ?: 0.0))
+                                            .title(it.id)
+                                            .icon(markerIcon))
+                                }
                             }
                         }
                     }

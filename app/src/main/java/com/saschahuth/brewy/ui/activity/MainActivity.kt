@@ -4,15 +4,11 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.Spanned
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.ui.fragment.BeersFragment
 import com.saschahuth.brewy.ui.fragment.NearbyBreweriesFragment
+import com.saschahuth.brewy.util.applyKerning
 import kotlinx.android.synthetic.main.activity_main.*
-import uk.co.chrisjenx.calligraphy.CalligraphyTypefaceSpan
-import uk.co.chrisjenx.calligraphy.TypefaceUtils
 import java.util.*
 
 class MainActivity : BaseActivity() {
@@ -47,12 +43,12 @@ class MainActivity : BaseActivity() {
         }
 
         override fun getPageTitle(position: Int): CharSequence {
-            val title: String = fragmentTitles[position];
-            val typefaceSpan: CalligraphyTypefaceSpan = CalligraphyTypefaceSpan(TypefaceUtils.load(this@MainActivity.assets, getString(R.string.fontPathRegular)));
-            val s: SpannableStringBuilder = SpannableStringBuilder();
-            s.append(title);
-            s.setSpan(typefaceSpan, 0, title.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-            return SpannableString.valueOf(s);
+          //  val title: String = fragmentTitles[position]
+          //  val typefaceSpan: CalligraphyTypefaceSpan = CalligraphyTypefaceSpan(TypefaceUtils.load(this@MainActivity.assets, getString(R.string.fontPathHeadline)))
+           // val s: SpannableStringBuilder = SpannableStringBuilder()
+           // s.append(title)
+           // s.setSpan(typefaceSpan, 0, title.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            return fragmentTitles[position].applyKerning(10f)
         }
     }
 }

@@ -13,7 +13,6 @@ import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
-import com.saschahuth.brewy.util.logDebug
 import kotlinx.android.synthetic.main.fragment_beers.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,7 +42,6 @@ class BeersFragment : Fragment() {
                         val itemAdapter = ItemAdapter(activity)
                         itemAdapter.addAll(filteredItems ?: listOf())
                         recyclerView.adapter = itemAdapter
-                        logDebug(names)
                     }
 
                     override fun onFailure(call: Call<ResultPage<Location>>?, throwable: Throwable?) {

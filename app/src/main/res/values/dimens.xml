@@ -17,4 +17,9 @@
     <dimen name="listItemImageHeight">64dp</dimen>
     <dimen name="detailImageWidth">128dp</dimen>
     <dimen name="detailImageHeight">128dp</dimen>
+
+    <!-- sliding panel values -->
+    <dimen name="peekFilterBarHeight">60dp</dimen>
+    <dimen name="peekHeaderHeight">180dp</dimen>
+    <dimen name="peekTotalHeight">240dp</dimen>
 </resources>

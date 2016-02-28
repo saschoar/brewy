@@ -1,195 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/slidingLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="bottom"
-    app:umanoDragView="@+id/dragView"
-    app:umanoFadeColor="@color/colorPrimarySemi"
-    app:umanoInitialState="expanded"
-    app:umanoOverlay="true"
-    app:umanoPanelHeight="260px"
-    app:umanoParallaxOffset="200dp"
-    app:umanoScrollableView="@+id/recyclerView"
-    app:umanoShadowHeight="0dp"
     tools:ignore="MissingPrefix">
 
-    <FrameLayout
-        android:id="@+id/mapWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/filterBackground"
-            android:elevation="2dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="@dimen/marginSmall"
-            android:paddingRight="@dimen/marginSmall"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/mapLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingLeft="@dimen/marginSmall"
-                android:paddingRight="@dimen/marginTiny"
-                android:text="Map"
-                android:textAllCaps="true"
-                android:textSize="@dimen/textSizeSmall" />
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/listMapSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:checked="true"
-                android:theme="@style/AlwaysColorizedSwitch" />
-
-            <TextView
-                android:id="@+id/listLabel"
-                fontPath="@string/fontPathBold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="center_vertical"
-                android:paddingBottom="@dimen/margin"
-                android:paddingLeft="@dimen/marginTiny"
-                android:paddingRight="@dimen/marginSmall"
-                android:paddingTop="@dimen/margin"
-                android:text="List"
-                android:textAllCaps="true"
-                android:textSize="@dimen/textSizeSmall" />
-
-            <TextView
-                android:id="@+id/myLocation"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:drawableLeft="@drawable/ic_my_location_24dp"
-                android:drawablePadding="@dimen/marginTiny"
-                android:gravity="center_vertical"
-                android:lines="1"
-                android:paddingLeft="@dimen/marginSmall"
-                android:paddingRight="@dimen/marginSmall"
-                android:text="My Location"
-                android:textAllCaps="true"
-                android:textSize="@dimen/textSizeSmall"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <TextView
-                android:id="@+id/layers"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:drawableLeft="@drawable/ic_layers_24dp"
-                android:drawablePadding="@dimen/marginTiny"
-                android:gravity="center_vertical"
-                android:lines="1"
-                android:paddingLeft="@dimen/marginSmall"
-                android:paddingRight="@dimen/marginSmall"
-                android:text="Streets"
-                android:textAllCaps="true"
-                android:textSize="@dimen/textSizeSmall"
-                android:visibility="gone"
-                tools:visibility="visible" />
-        </LinearLayout>
-
-        <com.google.android.gms.maps.MapView
-            android:id="@+id/mapView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="?attr/actionBarSize" />
-
-        <com.saschahuth.brewy.ui.view.LocationItemView
-            android:id="@+id/markerLocationView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:elevation="1dp"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <LinearLayout
-            android:id="@+id/filterBar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/filterBackground"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            tools:ignore="MissingPrefix">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/margin"
-                android:gravity="center_vertical"
-                android:text="List"
-                android:textAllCaps="true"
-                android:textColor="@color/textDefault" />
-
-            <android.support.v4.widget.Space
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/sort"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="?android:attr/selectableItemBackground"
-                android:drawableLeft="@drawable/ic_sort_24dp"
-                android:drawablePadding="@dimen/marginTiny"
-                android:gravity="center_vertical"
-                android:lines="1"
-                android:paddingLeft="@dimen/margin"
-                android:paddingRight="@dimen/margin"
-                android:text="Sorted by Distance"
-                android:textAllCaps="true"
-                android:textSize="@dimen/textSizeSmall" />
-        </LinearLayout>
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/dragView"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout
+        android:id="@+id/slidingLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="false"
-        android:orientation="vertical">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="60dp" />
+        android:gravity="bottom"
+        app:umanoClipPanel="false"
+        app:umanoDragView="@+id/dragView"
+        app:umanoFadeColor="@color/colorPrimarySemi"
+        app:umanoInitialState="expanded"
+        app:umanoOverlay="true"
+        app:umanoPanelHeight="@dimen/peekTotalHeight"
+        app:umanoParallaxOffset="@dimen/peekHeaderHeight"
+        app:umanoScrollableView="@+id/recyclerView"
+        app:umanoShadowHeight="0dp">
 
         <FrameLayout
+            android:id="@+id/mapWrapper"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:paddingBottom="@dimen/peekFilterBarHeight">
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/mapToolbar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|right"
+                android:layout_margin="@dimen/margin"
+                android:alpha="0.8"
+                android:background="@android:color/white">
+
+                <ImageView
+                    android:id="@+id/layers"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_layers_24dp" />
+
+                <ImageView
+                    android:id="@+id/myLocation"
+                    android:layout_width="?attr/actionBarSize"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_my_location_24dp" />
+            </LinearLayout>
+
+            <com.saschahuth.brewy.ui.view.LocationItemView
+                android:id="@+id/markerLocationView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="1dp"
+                android:visibility="gone"
+                tools:visibility="visible" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/dragView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/filterBar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/peekFilterBarHeight"
+                android:animateLayoutChanges="true"
+                android:background="@color/filterBackground"
+                android:elevation="1dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:translationY="@dimen/peekHeaderHeight"
+                tools:ignore="MissingPrefix">
+
+                <TextView
+                    android:id="@+id/listLabel"
+                    fontPath="@string/fontPathBold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/margin"
+                    android:gravity="center_vertical"
+                    android:text="List"
+                    android:textAllCaps="true"
+                    android:textColor="@color/textDefault"
+                    android:textSize="@dimen/textSizeDefault" />
+
+                <LinearLayout
+                    android:id="@+id/sortSwitchWrapper"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="right"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/distanceLabel"
+                        fontPath="@string/fontPathBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/margin"
+                        android:paddingRight="@dimen/marginTiny"
+                        android:text="By Distance"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/textSizeSmall" />
+
+                    <android.support.v7.widget.SwitchCompat
+                        android:id="@+id/sortSwitch"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:theme="@style/AlwaysColorizedSwitch" />
+
+                    <TextView
+                        android:id="@+id/nameLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="@dimen/marginTiny"
+                        android:paddingRight="@dimen/margin"
+                        android:text="A-Z"
+                        android:textAllCaps="true"
+                        android:textSize="@dimen/textSizeSmall" />
+                </LinearLayout>
+            </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:clipToPadding="false"
                 android:divider="@null"
+                android:overScrollMode="never"
                 android:scrollbarStyle="outsideOverlay"
                 android:scrollbars="vertical"
                 tools:listitem="@layout/item_brewery" />
 
-            <View
-                android:id="@+id/headerHelper"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:layout_width="match_parent"
-                android:layout_height="140px"
-                android:visibility="gone" />
-        </FrameLayout>
+        </LinearLayout>
 
-    </LinearLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
 
-</com.sothree.slidinguppanel.SlidingUpPanelLayout>
+    <View
+        android:id="@+id/headerHelper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:visibility="gone" />
+</FrameLayout>

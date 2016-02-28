@@ -13,7 +13,7 @@ import java.util.*
  * Created by sascha on 17.02.16.
  */
 
-class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ItemAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val list = ArrayList<Location>()
     val context = context
@@ -22,9 +22,12 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
     val VIEW_TYPE_ITEM = 1
 
     val header: View by lazy {
-        val view = View(context)
-        view.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 140)
-        view
+        View(context).apply {
+            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, headerHeight)
+            isFocusable = false
+            isFocusableInTouchMode = false
+            isClickable = false
+        }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
@@ -86,10 +89,6 @@ class ItemAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHold
             it.distanceTo(40.024925, -83.0038657)
         }
         notifyDataSetChanged()
-    }
-
-    fun setOnHeaderTouchListener(onTouchListener: View.OnTouchListener?) {
-        header.setOnTouchListener(onTouchListener)
     }
 
 }

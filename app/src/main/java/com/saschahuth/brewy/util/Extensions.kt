@@ -6,6 +6,11 @@ import android.content.pm.PackageManager
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ScaleXSpan
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -67,4 +72,21 @@ fun Activity.hasLocationPermission(): Boolean {
 
 fun Activity.requestLocationPermission(requestCode: Int) {
     ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION), requestCode)
+}
+
+fun CharSequence.applyKerning(kerning: Float): Spannable {
+    if (length < 2) {
+        return SpannableString(this)
+    }
+
+    val nonBreakingSpace = "\u00A0"
+
+    val builder = if (this is SpannableStringBuilder) this else SpannableStringBuilder(this)
+
+    for (i in length - 1..1) {
+        builder.insert(i, nonBreakingSpace)
+        builder.setSpan(ScaleXSpan(kerning), i, i + 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
+
+    return builder
 }
