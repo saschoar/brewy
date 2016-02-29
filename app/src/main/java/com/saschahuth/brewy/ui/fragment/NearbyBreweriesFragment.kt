@@ -1,11 +1,8 @@
 package com.saschahuth.brewy.ui.fragment
 
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -22,7 +19,6 @@ import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
-import com.saschahuth.brewy.util.logDebug
 import com.saschahuth.brewy.util.requestLocationPermission
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
@@ -81,7 +77,7 @@ class NearbyBreweriesFragment : Fragment() {
                 super.onScrolled(recyclerView, dx, dy)
                 recyclerViewScrolled -= dy
                 filterBar.translationY = Math.max(0, peekHeaderHeight + recyclerViewScrolled).toFloat()
-                slidingLayout.panelHeight = if (recyclerViewScrolled == 0) peekTotalHeight else peekFilterBarHeight
+                slidingLayout.panelHeight = Math.max(peekFilterBarHeight, peekTotalHeight + recyclerViewScrolled)
             }
         })
 
@@ -107,16 +103,6 @@ class NearbyBreweriesFragment : Fragment() {
                 slidingLayout.isTouchEnabled = true
                 filterBar.isClickable = false
                 sortSwitchWrapper.visibility = View.VISIBLE
-            }
-
-            override fun onPanelSlide(panel: View?, slideOffset: Float) {
-                super.onPanelSlide(panel, slideOffset)
-                logDebug(slideOffset)
-
-                if (slidingLayout.panelHeight == peekFilterBarHeight) {
-                    //TODO find better range
-                    filterBar.translationY = Math.max(0, peekHeaderHeight + recyclerViewScrolled).toFloat()
-                }
                 headerHelper.visibility = View.GONE
             }
 
@@ -127,10 +113,6 @@ class NearbyBreweriesFragment : Fragment() {
                 filterBar.isClickable = true
                 headerHelper.visibility = View.VISIBLE
                 sortSwitchWrapper.visibility = View.GONE
-
-                if (slidingLayout.panelHeight == peekFilterBarHeight) {
-                    filterBar.translationY = 0f
-                }
             }
         })
 
@@ -149,6 +131,16 @@ class NearbyBreweriesFragment : Fragment() {
             it.setOnMapClickListener {
                 selectMarker(null)
             }
+            it.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
+                override fun getInfoContents(p0: Marker?): View? {
+                    return null
+                }
+
+                override fun getInfoWindow(p0: Marker?): View? {
+                    return LayoutInflater.from(activity).inflate(R.layout.fake_info_window, null)
+                }
+
+            })
         }
 
         myLocation.setOnClickListener {
@@ -229,22 +221,27 @@ class NearbyBreweriesFragment : Fragment() {
 
     fun selectMarker(marker: Marker?) {
         selectedMarker?.setIcon(markerIcon)
+        selectedMarker?.hideInfoWindow()
+
         selectedMarker = marker
 
         val location = if (marker != null) itemAdapter.findById(marker.title) else null
         if (marker != null && location != null) {
             marker.setIcon(selectedMarkerIcon)
+            marker.showInfoWindow()
             markerLocationView.bind(location)
             markerLocationView.visibility = View.VISIBLE
+            markerLocationView.post { mapToolbar.translationY = markerLocationView.measuredHeight.toFloat() }
         } else {
             markerLocationView.visibility = View.GONE
+            mapToolbar.translationY = 0f
         }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        markerIcon = getBitmapDescriptor(R.drawable.ic_marker_36dp)
-        selectedMarkerIcon = getBitmapDescriptor(R.drawable.ic_marker_selected_48dp)
+        markerIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker)
+        selectedMarkerIcon = BitmapDescriptorFactory.fromResource(R.drawable.ic_map_marker_selected)
     }
 
     override fun onResume() {
@@ -284,17 +281,5 @@ class NearbyBreweriesFragment : Fragment() {
                 }
             }
         }
-    }
-
-    //TODO better caching of result
-    fun getBitmapDescriptor(id: Int): BitmapDescriptor {
-        val vectorDrawable = ContextCompat.getDrawable(context, id)
-        val h = vectorDrawable.intrinsicHeight
-        val w = vectorDrawable.intrinsicWidth
-        vectorDrawable.setBounds(0, 0, w.toInt(), h.toInt())
-        val bm = Bitmap.createBitmap(w.toInt(), h.toInt(), Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bm)
-        vectorDrawable.draw(canvas)
-        return BitmapDescriptorFactory.fromBitmap(bm)
     }
 }

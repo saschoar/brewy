@@ -40,6 +40,10 @@ android {
         buildConfigField "String", googleMapsApiKeyName, googleMapsApiKey
         resValue "string", breweryDbApiKeyResourceName, breweryDbApiKey
         resValue "string", googleMapsApiKeyResourceName, googleMapsApiKey
+
+        //used for Glide blur transformation
+        renderscriptTargetApi 20
+        renderscriptSupportModeEnabled true
     }
     buildTypes {
         release {
