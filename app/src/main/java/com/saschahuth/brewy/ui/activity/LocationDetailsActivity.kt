@@ -9,6 +9,8 @@ import com.saschahuth.brewy.BuildConfig
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
+import com.saschahuth.brewy.util.RoundedCornersTransformation
+import com.saschahuth.brewy.util.dimenToPixels
 import com.saschahuth.brewy.util.getFormattedAddress
 import kotlinx.android.synthetic.main.activity_location_details.*
 import uk.co.chrisjenx.calligraphy.TypefaceUtils
@@ -19,6 +21,7 @@ class LocationDetailsActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_location_details)
 
         val headlineTypeface = TypefaceUtils.load(assets, getString(R.string.fontPathHeadline))
@@ -47,7 +50,7 @@ class LocationDetailsActivity : BaseActivity() {
 
             val uriString = location?.brewery?.images?.squareMedium
             if (uriString != null) {
-                Glide.with(this).load(uriString).into(image)
+                Glide.with(this).load(uriString).bitmapTransform(RoundedCornersTransformation(this, dimenToPixels(R.dimen.margin), 0)).into(image)
             } else {
                 Glide.clear(image)
                 image.setImageResource(R.color.imagePlaceholder)
