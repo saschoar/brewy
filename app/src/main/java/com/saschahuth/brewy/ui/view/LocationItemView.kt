@@ -14,9 +14,7 @@ import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
 import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
-import com.saschahuth.brewy.util.distanceTo
-import com.saschahuth.brewy.util.getFormattedAddress
-import com.saschahuth.brewy.util.getFormattedName
+import com.saschahuth.brewy.util.*
 import kotlinx.android.synthetic.main.item_brewery.view.*
 
 /**
@@ -49,7 +47,7 @@ class LocationItemView : RelativeLayout {
         distance.text = "${location.distanceTo(40.024925, -83.0038657).toInt()} m away" //TODO just for testing
         val uriString = location.brewery?.images?.squareMedium
         if (uriString != null) {
-            Glide.with(context).load(uriString).into(image)
+            Glide.with(context).load(uriString).bitmapTransform(RoundedCornersTransformation(context, dimenToPixels(R.dimen.marginSmall), 0)).into(image)
         } else {
             Glide.clear(image);
             image.setImageResource(R.color.imagePlaceholder)

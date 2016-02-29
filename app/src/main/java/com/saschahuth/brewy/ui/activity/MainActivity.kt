@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentPagerAdapter
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.ui.fragment.BeersFragment
 import com.saschahuth.brewy.ui.fragment.NearbyBreweriesFragment
-import com.saschahuth.brewy.util.applyKerning
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -43,12 +42,7 @@ class MainActivity : BaseActivity() {
         }
 
         override fun getPageTitle(position: Int): CharSequence {
-          //  val title: String = fragmentTitles[position]
-          //  val typefaceSpan: CalligraphyTypefaceSpan = CalligraphyTypefaceSpan(TypefaceUtils.load(this@MainActivity.assets, getString(R.string.fontPathHeadline)))
-           // val s: SpannableStringBuilder = SpannableStringBuilder()
-           // s.append(title)
-           // s.setSpan(typefaceSpan, 0, title.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-            return fragmentTitles[position].applyKerning(10f)
+            return fragmentTitles[position]
         }
     }
 }

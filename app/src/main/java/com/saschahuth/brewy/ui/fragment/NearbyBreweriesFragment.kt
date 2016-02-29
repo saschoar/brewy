@@ -44,6 +44,8 @@ class NearbyBreweriesFragment : Fragment() {
 
     var mapView: MapView? = null
 
+    val MAP_VIEW_SAVED_STATE = "mapViewSaveState"
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_nearby_breweries, container, false)
     }
@@ -133,7 +135,10 @@ class NearbyBreweriesFragment : Fragment() {
         })
 
         mapView = view?.findViewById(R.id.mapView) as MapView
-        mapView?.onCreate(savedInstanceState)
+
+        // see https://code.google.com/p/gmaps-api-issues/issues/detail?id=6237#c9
+        val mapViewSavedState = savedInstanceState?.getBundle(MAP_VIEW_SAVED_STATE)
+        mapView?.onCreate(mapViewSavedState)
 
         mapView?.getMapAsync {
             it.uiSettings.isMyLocationButtonEnabled = false
@@ -263,8 +268,10 @@ class NearbyBreweriesFragment : Fragment() {
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
+        val mapViewSavedState = Bundle(outState)
+        mapView?.onSaveInstanceState(mapViewSavedState)
+        outState?.putBundle(MAP_VIEW_SAVED_STATE, mapViewSavedState)
         super.onSaveInstanceState(outState)
-        mapView?.onSaveInstanceState(outState)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
