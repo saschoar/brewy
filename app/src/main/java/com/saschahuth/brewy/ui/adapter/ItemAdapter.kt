@@ -4,7 +4,7 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
-import com.saschahuth.brewy.domain.brewerydb.model.Location
+import com.saschahuth.brewy.domain.model.Location
 import com.saschahuth.brewy.ui.view.LocationItemView
 import com.saschahuth.brewy.util.distanceTo
 import java.util.*
@@ -52,11 +52,6 @@ class ItemAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapte
                 (viewHolder?.itemView as LocationItemView).bind(location)
             }
         }
-    }
-
-    fun add(toAdd: Location) {
-        list.add(toAdd)
-        notifyDataSetChanged()
     }
 
     fun addAll(toAdd: List<Location>) {

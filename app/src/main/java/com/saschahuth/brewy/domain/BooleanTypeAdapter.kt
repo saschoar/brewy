@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.domain.brewerydb
+package com.saschahuth.brewy.domain
 
 import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader

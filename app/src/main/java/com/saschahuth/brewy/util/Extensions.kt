@@ -10,7 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.View
 import android.widget.Toast
-import com.saschahuth.brewy.domain.brewerydb.model.Location
+import com.saschahuth.brewy.domain.model.Location
 
 /**
  * Created by sascha on 13.02.16.

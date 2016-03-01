@@ -1,12 +1,11 @@
-package com.saschahuth.brewy.ui.activity
+package com.saschahuth.brewy.ui.main
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import com.saschahuth.brewy.BaseActivity
 import com.saschahuth.brewy.R
-import com.saschahuth.brewy.ui.fragment.BeersFragment
-import com.saschahuth.brewy.ui.fragment.NearbyBreweriesFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import java.util.*
 
@@ -17,14 +16,16 @@ class MainActivity : BaseActivity() {
         setContentView(R.layout.activity_main)
 
         val adapter = MainContentFragmentAdapter(supportFragmentManager)
-        adapter.addFragment(NearbyBreweriesFragment(), "Nearby")
-        adapter.addFragment(BeersFragment(), "Beers")
+        adapter.addFragment(NearbyBreweriesFragment.newInstance(), "Nearby")
+        adapter.addFragment(BeersFragment.newInstance(), "Beers")
         viewPager.adapter = adapter
 
         tabs.setupWithViewPager(viewPager)
+
+        MainComponent.Initializer.init(this).inject(this)
     }
 
-    inner class MainContentFragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+    class MainContentFragmentAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
         private val fragments = ArrayList<Fragment>()
         private val fragmentTitles = ArrayList<String>()
 

@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.ui.fragment
+package com.saschahuth.brewy.ui.main
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,6 +10,10 @@ import android.view.ViewGroup
 import com.saschahuth.brewy.R
 
 class BeersFragment : Fragment() {
+
+    companion object {
+        @JvmStatic fun newInstance() = BeersFragment()
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val recyclerView: RecyclerView = inflater?.inflate(R.layout.fragment_beers, container, false) as RecyclerView

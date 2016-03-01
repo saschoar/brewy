@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.ui.activity
+package com.saschahuth.brewy.ui.locationDetails
 
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
@@ -6,9 +6,11 @@ import android.net.Uri
 import android.os.Bundle
 import com.bumptech.glide.Glide
 import com.r0adkll.slidr.Slidr
+import com.r0adkll.slidr.model.SlidrConfig
+import com.saschahuth.brewy.BaseActivity
 import com.saschahuth.brewy.BuildConfig
 import com.saschahuth.brewy.R
-import com.saschahuth.brewy.domain.brewerydb.model.Location
+import com.saschahuth.brewy.domain.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
 import com.saschahuth.brewy.util.BlurTransformation
 import com.saschahuth.brewy.util.RoundedCornersTransformation
@@ -26,7 +28,7 @@ class LocationDetailsActivity : BaseActivity() {
 
         setContentView(R.layout.activity_location_details)
 
-        Slidr.attach(this)
+        Slidr.attach(this, SlidrConfig.Builder().sensitivity(0.5f).build())
 
         val headlineTypeface = TypefaceUtils.load(assets, getString(R.string.fontPathHeadline))
 

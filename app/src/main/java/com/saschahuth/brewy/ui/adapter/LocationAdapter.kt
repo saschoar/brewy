@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import com.saschahuth.brewy.domain.brewerydb.model.Location
+import com.saschahuth.brewy.domain.model.Location
 import com.saschahuth.brewy.ui.view.LocationItemView
 import com.saschahuth.brewy.util.distanceTo
 

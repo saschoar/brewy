@@ -1,14 +1,14 @@
-package com.saschahuth.brewy.domain.brewerydb
+package com.saschahuth.brewy.domain
 
 import android.content.Context
 import android.support.annotation.StringDef
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.saschahuth.brewy.BuildConfig
-import com.saschahuth.brewy.domain.brewerydb.model.Brewery
-import com.saschahuth.brewy.domain.brewerydb.model.Location
-import com.saschahuth.brewy.domain.brewerydb.model.Result
-import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
+import com.saschahuth.brewy.domain.model.Brewery
+import com.saschahuth.brewy.domain.model.Location
+import com.saschahuth.brewy.domain.model.Result
+import com.saschahuth.brewy.domain.model.ResultPage
 import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -18,20 +18,21 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import rx.Observable
 import java.util.concurrent.TimeUnit
 
 /**
  * Created by sascha on 13.02.16.
  */
-interface Api {
+public interface BreweryDbService {
 
     companion object {
 
-        var api: Api? = null
+        var breweryDbService: BreweryDbService? = null
 
-        fun get(context: Context): Api {
+        fun get(context: Context): BreweryDbService {
             //TODO not the best singleton implementation
-            if (api == null) {
+            if (breweryDbService == null) {
                 val logging = HttpLoggingInterceptor()
                 logging.level = HttpLoggingInterceptor.Level.BODY
 
@@ -72,9 +73,9 @@ interface Api {
                         .client(httpClientBuilder.build())
                         .build()
 
-                api = restAdapter.create(Api::class.java)
+                breweryDbService = restAdapter.create(BreweryDbService::class.java)
             }
-            return api!!
+            return breweryDbService!!
         }
     }
 
@@ -111,7 +112,7 @@ interface Api {
             @Query("unit") @DistanceUnit unit: String? = null,
             @Query("withSocialAccounts") withSocialAccounts: Boolean? = null,
             @Query("withGuilds") withGuilds: Boolean? = null,
-            @Query("withAlternateNames") withAlternateNames: Boolean? = null): Call<ResultPage<Location>>
+            @Query("withAlternateNames") withAlternateNames: Boolean? = null): Observable<ResultPage<Location>>
 
 }
 

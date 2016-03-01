@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.ui.activity
+package com.saschahuth.brewy
 
 import android.content.Context
 import android.support.v7.app.AppCompatActivity

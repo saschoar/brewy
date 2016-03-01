@@ -1,6 +1,6 @@
-package com.saschahuth.brewy.domain.brewerydb.model
+package com.saschahuth.brewy.domain.model
 
-import com.saschahuth.brewy.domain.brewerydb.LocationType
+import com.saschahuth.brewy.domain.LocationType
 import nz.bradcampbell.paperparcel.PaperParcel
 
 /**

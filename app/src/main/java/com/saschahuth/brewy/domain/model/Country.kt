@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.domain.brewerydb.model
+package com.saschahuth.brewy.domain.model
 
 import nz.bradcampbell.paperparcel.PaperParcel
 

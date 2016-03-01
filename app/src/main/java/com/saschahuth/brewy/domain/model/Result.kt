@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.domain.brewerydb.model
+package com.saschahuth.brewy.domain.model
 
 /**
  * Created by sascha on 13.02.16.

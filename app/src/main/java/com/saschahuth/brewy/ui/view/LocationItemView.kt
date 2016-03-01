@@ -7,9 +7,9 @@ import android.view.LayoutInflater
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.saschahuth.brewy.R
-import com.saschahuth.brewy.domain.brewerydb.model.Location
+import com.saschahuth.brewy.domain.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
-import com.saschahuth.brewy.ui.activity.LocationDetailsActivity
+import com.saschahuth.brewy.ui.locationDetails.LocationDetailsActivity
 import com.saschahuth.brewy.util.*
 import kotlinx.android.synthetic.main.item_brewery.view.*
 

@@ -1,5 +1,6 @@
-package com.saschahuth.brewy.ui.fragment
+package com.saschahuth.brewy.ui.main
 
+import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -13,21 +14,18 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.*
 import com.saschahuth.brewy.R
-import com.saschahuth.brewy.domain.brewerydb.Api
-import com.saschahuth.brewy.domain.brewerydb.DISTANCE_UNIT_MILES
-import com.saschahuth.brewy.domain.brewerydb.model.Location
-import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
+import com.saschahuth.brewy.domain.BreweryDbServiceProvider
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
 import com.saschahuth.brewy.util.requestLocationPermission
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils
+import javax.inject.Inject
 
 class NearbyBreweriesFragment : Fragment() {
+
+    @Inject lateinit var breweryDbServiceProvider: BreweryDbServiceProvider
 
     private val itemAdapter: ItemAdapter by lazy { ItemAdapter(activity, peekHeaderHeight) }
     private val peekFilterBarHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekFilterBarHeight) }
@@ -48,6 +46,15 @@ class NearbyBreweriesFragment : Fragment() {
     var recyclerViewScrolled = 0
 
     var canScrollVertically = true
+
+    companion object {
+        @JvmStatic fun newInstance() = NearbyBreweriesFragment()
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        MainComponent.Initializer.init(activity as MainActivity).inject(this)
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater?.inflate(R.layout.fragment_nearby_breweries, container, false)
@@ -77,37 +84,28 @@ class NearbyBreweriesFragment : Fragment() {
 
         recyclerView.adapter = itemAdapter
 
-        val breweryDbApi = Api.get(activity)
+        breweryDbServiceProvider
+                .getLocationsByGeoPoint()
+                .subscribe {
+                    var data = it?.data
 
-        breweryDbApi
-                .getLocationsByGeoPoint(40.024925, -83.0038657, unit = DISTANCE_UNIT_MILES)
-                .enqueue(object : Callback<ResultPage<Location>> {
-
-                    override fun onResponse(call: Call<ResultPage<Location>>?, response: Response<ResultPage<Location>>?) {
-                        var data = response?.body()?.data
-
-                        if (data != null) {
-                            itemAdapter.addAll(data.filterNot {
+                    if (data != null) {
+                        itemAdapter.addAll(data.filterNot {
+                            it.inPlanning ?: true || it.isClosed ?: true
+                        })
+                        mapView?.getMapAsync {
+                            mapView ->
+                            data.filterNot {
                                 it.inPlanning ?: true || it.isClosed ?: true
-                            })
-                            mapView?.getMapAsync {
-                                mapView ->
-                                data.filterNot {
-                                    it.inPlanning ?: true || it.isClosed ?: true
-                                }.forEach {
-                                    mapView?.addMarker(MarkerOptions()
-                                            .position(LatLng(it.latitude?.toDouble() ?: 0.0, it.longitude?.toDouble() ?: 0.0))
-                                            .title(it.id)
-                                            .icon(markerIcon))
-                                }
+                            }.forEach {
+                                mapView?.addMarker(MarkerOptions()
+                                        .position(LatLng(it.latitude?.toDouble() ?: 0.0, it.longitude?.toDouble() ?: 0.0))
+                                        .title(it.id)
+                                        .icon(markerIcon))
                             }
                         }
                     }
-
-                    override fun onFailure(call: Call<ResultPage<Location>>?, throwable: Throwable?) {
-                        //TODO
-                    }
-                })
+                }
     }
 
     fun selectMarker(marker: Marker?) {
