@@ -1,5 +1,6 @@
 package com.saschahuth.brewy.domain.brewerydb
 
+import android.content.Context
 import android.support.annotation.StringDef
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -8,6 +9,7 @@ import com.saschahuth.brewy.domain.brewerydb.model.Brewery
 import com.saschahuth.brewy.domain.brewerydb.model.Location
 import com.saschahuth.brewy.domain.brewerydb.model.Result
 import com.saschahuth.brewy.domain.brewerydb.model.ResultPage
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -16,6 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.util.concurrent.TimeUnit
 
 /**
  * Created by sascha on 13.02.16.
@@ -23,36 +26,55 @@ import retrofit2.http.Query
 interface Api {
 
     companion object {
-        fun create(): Api {
-            val logging = HttpLoggingInterceptor()
-            logging.level = HttpLoggingInterceptor.Level.BODY
 
-            val httpClient = OkHttpClient.Builder()
+        var api: Api? = null
 
-            httpClient.addInterceptor(logging)
+        fun get(context: Context): Api {
+            //TODO not the best singleton implementation
+            if (api == null) {
+                val logging = HttpLoggingInterceptor()
+                logging.level = HttpLoggingInterceptor.Level.BODY
 
-            httpClient.addInterceptor({ chain ->
-                val request = chain.request()
-                request.header("Accept:application/json")
-                val url = request
-                        .url()
-                        .newBuilder()
-                        .addQueryParameter("key", BuildConfig.BREWERY_DB_API_KEY)
+                val httpClientBuilder = OkHttpClient.Builder()
+
+                val cacheSize: Long = 10 * 1024 * 1024; // 10 MiB
+                val responseCache = Cache(context.cacheDir, cacheSize)
+
+                httpClientBuilder.apply {
+                    cache(responseCache)
+                    readTimeout(1, TimeUnit.HOURS);
+                    connectTimeout(1, TimeUnit.HOURS);
+
+                    addInterceptor(logging)
+
+                    addInterceptor({ chain ->
+                        val request = chain.request()
+                        request.header("Accept:application/json")
+                        val maxStale = TimeUnit.HOURS.toMillis(48)
+                        request.header("Cache-Control:public, only-if-cached, max-stale=$maxStale");
+
+                        val url = request
+                                .url()
+                                .newBuilder()
+                                .addQueryParameter("key", BuildConfig.BREWERY_DB_API_KEY)
+                                .build()
+                        chain.proceed(request.newBuilder().url(url).build())
+                    })
+                }
+
+                val gson: Gson = GsonBuilder()
+                        .registerTypeAdapter(Boolean::class.java, BooleanTypeAdapter())
+                        .create()
+
+                val restAdapter = Retrofit.Builder()
+                        .baseUrl("http://api.brewerydb.com/v2/")
+                        .addConverterFactory(GsonConverterFactory.create(gson))
+                        .client(httpClientBuilder.build())
                         .build()
-                chain.proceed(request.newBuilder().url(url).build())
-            })
 
-            val gson: Gson = GsonBuilder()
-                    .registerTypeAdapter(Boolean::class.java, BooleanTypeAdapter())
-                    .create()
-
-            val restAdapter = Retrofit.Builder()
-                    .baseUrl("http://api.brewerydb.com/v2/")
-                    .addConverterFactory(GsonConverterFactory.create(gson))
-                    .client(httpClient.build())
-                    .build()
-
-            return restAdapter.create(Api::class.java)
+                api = restAdapter.create(Api::class.java)
+            }
+            return api!!
         }
     }
 

@@ -5,6 +5,7 @@ import android.graphics.ColorMatrixColorFilter
 import android.net.Uri
 import android.os.Bundle
 import com.bumptech.glide.Glide
+import com.r0adkll.slidr.Slidr
 import com.saschahuth.brewy.BuildConfig
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.brewerydb.model.Location
@@ -24,6 +25,8 @@ class LocationDetailsActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_location_details)
+
+        Slidr.attach(this)
 
         val headlineTypeface = TypefaceUtils.load(assets, getString(R.string.fontPathHeadline))
 

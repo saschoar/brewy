@@ -1,13 +1,9 @@
 package com.saschahuth.brewy.ui.view
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityOptionsCompat
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
 import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.saschahuth.brewy.R
@@ -58,14 +54,6 @@ class LocationItemView : RelativeLayout {
         val locationParcel = LocationParcel.wrap(location)
         val intent = Intent(context, LocationDetailsActivity::class.java)
         intent.putExtra("location", locationParcel)
-
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                // the context of the activity
-                context as Activity,
-                android.support.v4.util.Pair<View, String>(image,
-                        context.getString(R.string.transitionNameCircle))
-        )
-
-        ActivityCompat.startActivity(context as Activity, intent, options.toBundle())
+        context.startActivity(intent)
     }
 }

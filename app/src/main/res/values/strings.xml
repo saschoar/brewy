@@ -1,6 +1,4 @@
 <resources>
     <string name="app_name">Brewy</string>
-    <string name="transitionNameName" translatable="false">transition:NAME</string>
-    <string name="transitionNameCircle" translatable="false">transition:CIRCLE</string>
 
 </resources>

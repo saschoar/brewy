@@ -36,15 +36,9 @@ class NearbyBreweriesFragment : Fragment() {
 
     private val PERMISSIONS_LOCATION = 0
 
-    private var isSortingByName: Boolean = false
-
     var mapView: MapView? = null
 
     val MAP_VIEW_SAVED_STATE = "mapViewSaveState"
-
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater?.inflate(R.layout.fragment_nearby_breweries, container, false)
-    }
 
     var selectedMarker: Marker? = null
 
@@ -55,66 +49,12 @@ class NearbyBreweriesFragment : Fragment() {
 
     var canScrollVertically = true
 
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater?.inflate(R.layout.fragment_nearby_breweries, container, false)
+    }
+
     override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        recyclerView.layoutManager = object : LinearLayoutManager(recyclerView.context) {
-            override fun canScrollVertically(): Boolean {
-                return super.canScrollVertically() && canScrollVertically
-            }
-        }
-
-        filterBar.setOnTouchListener {
-            view, motionEvent ->
-            if (slidingLayout.panelState == SlidingUpPanelLayout.PanelState.COLLAPSED) {
-                slidingLayout.isTouchEnabled = true
-            }
-            false
-        }
-
-        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                recyclerViewScrolled -= dy
-                filterBar.translationY = Math.max(0, peekHeaderHeight + recyclerViewScrolled).toFloat()
-                slidingLayout.panelHeight = Math.max(peekFilterBarHeight, peekTotalHeight + recyclerViewScrolled)
-            }
-        })
-
-        itemAdapter.header.setOnClickListener {
-            slidingLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
-        }
-
-        filterBar.setOnClickListener {
-            slidingLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
-        }
-        filterBar.isClickable = false
-
-        headerHelper.setOnTouchListener {
-            view, motionEvent ->
-            mapWrapper.dispatchTouchEvent(motionEvent)
-        }
-
-        slidingLayout.setPanelSlideListener(object : SlidingUpPanelLayout.SimplePanelSlideListener() {
-            override fun onPanelExpanded(panel: View?) {
-                super.onPanelExpanded(panel)
-                selectMarker(null)
-                canScrollVertically = true
-                slidingLayout.isTouchEnabled = true
-                filterBar.isClickable = false
-                sortSwitchWrapper.visibility = View.VISIBLE
-                headerHelper.visibility = View.GONE
-            }
-
-            override fun onPanelCollapsed(panel: View?) {
-                super.onPanelCollapsed(panel)
-                slidingLayout.isTouchEnabled = true
-                canScrollVertically = false
-                filterBar.isClickable = true
-                headerHelper.visibility = View.VISIBLE
-                sortSwitchWrapper.visibility = View.GONE
-            }
-        })
 
         mapView = view?.findViewById(R.id.mapView) as MapView
 
@@ -122,38 +62,9 @@ class NearbyBreweriesFragment : Fragment() {
         val mapViewSavedState = savedInstanceState?.getBundle(MAP_VIEW_SAVED_STATE)
         mapView?.onCreate(mapViewSavedState)
 
-        mapView?.getMapAsync {
-            it.uiSettings.isMyLocationButtonEnabled = false
-            it.setOnMarkerClickListener {
-                selectMarker(it)
-                true
-            }
-            it.setOnMapClickListener {
-                selectMarker(null)
-            }
-            it.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
-                override fun getInfoContents(p0: Marker?): View? {
-                    return null
-                }
-
-                override fun getInfoWindow(p0: Marker?): View? {
-                    return LayoutInflater.from(activity).inflate(R.layout.fake_info_window, null)
-                }
-
-            })
-        }
-
-        myLocation.setOnClickListener {
-            mapView?.getMapAsync {
-                it.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
-            }
-        }
-
-        layers.setOnClickListener {
-            mapView?.getMapAsync {
-                it.mapType = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
-            }
-        }
+        setupMap()
+        setupFilterBar()
+        setupSlidingUi()
 
         if (!activity.hasLocationPermission()) {
             activity.requestLocationPermission(PERMISSIONS_LOCATION)
@@ -166,27 +77,7 @@ class NearbyBreweriesFragment : Fragment() {
 
         recyclerView.adapter = itemAdapter
 
-        sortSwitch.setOnCheckedChangeListener {
-            button, b ->
-            CalligraphyUtils.applyFontToTextView(activity, nameLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
-            CalligraphyUtils.applyFontToTextView(activity, distanceLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
-            if (b) {
-                itemAdapter.sortByName()
-            } else {
-                itemAdapter.sortByDistance()
-            }
-        }
-
-        nameLabel.setOnTouchListener {
-            view, motionEvent ->
-            sortSwitch.dispatchTouchEvent(motionEvent)
-        }
-        distanceLabel.setOnTouchListener {
-            view, motionEvent ->
-            sortSwitch.dispatchTouchEvent(motionEvent)
-        }
-
-        val breweryDbApi = Api.create()
+        val breweryDbApi = Api.get(activity)
 
         breweryDbApi
                 .getLocationsByGeoPoint(40.024925, -83.0038657, unit = DISTANCE_UNIT_MILES)
@@ -281,5 +172,121 @@ class NearbyBreweriesFragment : Fragment() {
                 }
             }
         }
+    }
+
+    fun setupMap() {
+        mapView?.getMapAsync {
+            it.uiSettings.isMyLocationButtonEnabled = false
+            it.setOnMarkerClickListener {
+                selectMarker(it)
+                true
+            }
+            it.setOnMapClickListener {
+                selectMarker(null)
+            }
+            it.setInfoWindowAdapter(object : GoogleMap.InfoWindowAdapter {
+                override fun getInfoContents(p0: Marker?): View? {
+                    return null
+                }
+
+                override fun getInfoWindow(p0: Marker?): View? {
+                    return LayoutInflater.from(activity).inflate(R.layout.fake_info_window, null)
+                }
+
+            })
+        }
+
+        layers.setOnClickListener {
+            mapView?.getMapAsync {
+                it.mapType = if (it.mapType == GoogleMap.MAP_TYPE_NORMAL) GoogleMap.MAP_TYPE_HYBRID else GoogleMap.MAP_TYPE_NORMAL
+            }
+        }
+
+        myLocation.setOnClickListener {
+            mapView?.getMapAsync {
+                it.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(40.024925, -83.0038657), 14F))
+            }
+        }
+
+    }
+
+    fun setupFilterBar() {
+        sortSwitch.setOnCheckedChangeListener {
+            button, b ->
+            CalligraphyUtils.applyFontToTextView(activity, nameLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
+            CalligraphyUtils.applyFontToTextView(activity, distanceLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
+            if (b) {
+                itemAdapter.sortByName()
+            } else {
+                itemAdapter.sortByDistance()
+            }
+        }
+
+        nameLabel.setOnTouchListener {
+            view, motionEvent ->
+            sortSwitch.dispatchTouchEvent(motionEvent)
+        }
+        distanceLabel.setOnTouchListener {
+            view, motionEvent ->
+            sortSwitch.dispatchTouchEvent(motionEvent)
+        }
+    }
+
+    fun setupSlidingUi() {
+
+        recyclerView.layoutManager = object : LinearLayoutManager(recyclerView.context) {
+            override fun canScrollVertically(): Boolean {
+                return super.canScrollVertically() && canScrollVertically
+            }
+        }
+
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                recyclerViewScrolled -= dy
+                filterBar.translationY = Math.max(0, peekHeaderHeight + recyclerViewScrolled).toFloat()
+                slidingLayout.panelHeight = Math.max(peekFilterBarHeight, peekTotalHeight + recyclerViewScrolled)
+            }
+        })
+
+        itemAdapter.header.setOnClickListener {
+            slidingLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
+        }
+
+        filterBar.setOnClickListener {
+            slidingLayout.panelState = SlidingUpPanelLayout.PanelState.EXPANDED
+        }
+        filterBar.isClickable = false
+
+        headerHelper.setOnTouchListener {
+            view, motionEvent ->
+            mapWrapper.dispatchTouchEvent(motionEvent)
+        }
+
+        slidingLayout.setPanelSlideListener(object : SlidingUpPanelLayout.SimplePanelSlideListener() {
+            override fun onPanelExpanded(panel: View?) {
+                super.onPanelExpanded(panel)
+                selectMarker(null)
+                canScrollVertically = true
+                filterBar.isClickable = false
+                sortSwitchWrapper.visibility = View.VISIBLE
+                headerHelper.visibility = View.GONE
+            }
+
+            override fun onPanelSlide(panel: View?, slideOffset: Float) {
+                super.onPanelSlide(panel, slideOffset)
+                if (!filterBar.isClickable) {
+                    sortSwitchWrapper.visibility = View.GONE
+                }
+            }
+
+            override fun onPanelCollapsed(panel: View?) {
+                super.onPanelCollapsed(panel)
+                canScrollVertically = false
+                filterBar.isClickable = true
+                headerHelper.visibility = View.VISIBLE
+                sortSwitchWrapper.visibility = View.GONE
+            }
+        })
     }
 }

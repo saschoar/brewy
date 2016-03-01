@@ -3,12 +3,16 @@
     <style name="Theme.Brewy" parent="Base.Theme.Brewy" />
 
     <style name="Base.Theme.Brewy" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textViewStyle">@style/BrewyTextAppearance</item>
         <item name="android:textAppearance">@style/BrewyTextAppearance</item>
+    </style>
+
+    <style name="Theme.Brewy.Slidr">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
 
     <style name="BrewyTextAppearance" parent="android:Widget.TextView">

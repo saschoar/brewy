@@ -70,6 +70,7 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     compile 'com.sothree.slidinguppanel:library:3.2.1'
+    compile 'com.r0adkll:slidableactivity:2.0.5'
     compile 'com.github.grandstaish.paperparcel:paperparcel:1.0.0-beta1'
     kapt 'com.github.grandstaish.paperparcel:compiler:1.0.0-beta1'
 }

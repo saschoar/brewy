@@ -13,8 +13,7 @@
         android:layout_width="@dimen/listItemImageWidth"
         android:layout_height="@dimen/listItemImageHeight"
         android:layout_centerVertical="true"
-        android:layout_marginRight="@dimen/margin"
-        android:transitionName="@string/transitionNameCircle" />
+        android:layout_marginRight="@dimen/margin" />
 
     <TextView
         android:id="@+id/title"
