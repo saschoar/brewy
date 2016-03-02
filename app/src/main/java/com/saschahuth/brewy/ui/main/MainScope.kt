@@ -1,6 +1,5 @@
 package com.saschahuth.brewy.ui.main
 
-
 import javax.inject.Scope
 
 @Scope

@@ -5,7 +5,7 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-public class RepositoryModule {
+public class DomainModule {
 
     @Provides
     @AppScope
