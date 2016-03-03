@@ -9,8 +9,8 @@
     <color name="colorAccent">#f9a825</color>
     <color name="textDefault">#444</color>
     <color name="textLight">#666</color>
-    <color name="imagePlaceholder">#eee</color>
+    <color name="imagePlaceholder">#4419243f</color>
     <color name="filterBackground">#fff</color>
     <color name="navigationBarBackground">#ccc</color>
-    <color name="defaultBackground">#fbfbfb</color>
+    <color name="defaultBackground">#fafafa</color>
 </resources>

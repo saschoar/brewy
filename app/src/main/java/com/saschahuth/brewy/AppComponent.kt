@@ -1,7 +1,8 @@
 package com.saschahuth.brewy
 
 import com.saschahuth.brewy.domain.DomainModule
-import com.saschahuth.brewy.ui.adapter.ItemAdapter
+import com.saschahuth.brewy.ui.brewery.BreweryActivity
+import com.saschahuth.brewy.ui.brewery.BreweryLocationAdapter
 import com.saschahuth.brewy.ui.main.MainActivity
 import com.saschahuth.brewy.ui.main.NearbyBreweriesFragment
 import dagger.Component
@@ -14,7 +15,9 @@ interface AppComponent {
 
     fun inject(mainActivity: MainActivity)
 
+    fun inject(breweryActivity: BreweryActivity)
+
     fun inject(nearbyBreweriesFragment: NearbyBreweriesFragment)
 
-    fun inject(itemAdapter: ItemAdapter)
+    fun inject(breweryLocationAdapter: BreweryLocationAdapter)
 }

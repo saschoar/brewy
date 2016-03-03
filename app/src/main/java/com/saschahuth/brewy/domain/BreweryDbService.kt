@@ -1,10 +1,7 @@
 package com.saschahuth.brewy.domain
 
 import android.support.annotation.StringDef
-import com.saschahuth.brewy.domain.model.Brewery
-import com.saschahuth.brewy.domain.model.Location
-import com.saschahuth.brewy.domain.model.Result
-import com.saschahuth.brewy.domain.model.ResultPage
+import com.saschahuth.brewy.domain.model.*
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -23,6 +20,10 @@ public interface BreweryDbService {
             @Query("withGuilds") withGuilds: Boolean? = null,
             @Query("withLocations") withLocations: Boolean? = null,
             @Query("withAlternateNames") withAlternateNames: Boolean? = null): Call<Result<Brewery>>
+
+    @GET("brewery/{id}/beers/")
+    fun getBeersForBrewery(
+            @Path("id") id: String): Observable<ResultPage<Beer>>
 
     @GET("locations/")
     fun getLocations(

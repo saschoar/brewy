@@ -1,9 +1,12 @@
 package com.saschahuth.brewy.domain.model
 
+import nz.bradcampbell.paperparcel.PaperParcel
+
 /**
  * Created by sascha on 13.02.16.
  */
 
+@PaperParcel
 data class Beer(
         var id: String?,
         var name: String?,

@@ -1,11 +1,10 @@
-package com.saschahuth.brewy.ui.adapter
+package com.saschahuth.brewy.ui.brewery
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.saschahuth.brewy.domain.model.Location
-import com.saschahuth.brewy.ui.brewery.BreweryLocationView
 import com.saschahuth.brewy.util.distanceTo
 import java.util.*
 
@@ -13,7 +12,7 @@ import java.util.*
  * Created by sascha on 17.02.16.
  */
 
-class ItemAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class BreweryLocationAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     val list = ArrayList<Location>()
     val context = context

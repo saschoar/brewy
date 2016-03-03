@@ -18,7 +18,7 @@ import com.saschahuth.brewy.BrewyApp
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.BreweryDbService
 import com.saschahuth.brewy.domain.DISTANCE_UNIT_MILES
-import com.saschahuth.brewy.ui.adapter.ItemAdapter
+import com.saschahuth.brewy.ui.brewery.BreweryLocationAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
 import com.saschahuth.brewy.util.logDebug
 import com.saschahuth.brewy.util.removeUnusable
@@ -36,7 +36,7 @@ class NearbyBreweriesFragment : Fragment() {
 
     @Inject lateinit var locationManager: LocationManager
 
-    private val itemAdapter: ItemAdapter by lazy { ItemAdapter(activity, peekHeaderHeight) }
+    private val breweryLocationAdapter: BreweryLocationAdapter by lazy { BreweryLocationAdapter(activity, peekHeaderHeight) }
     private val peekFilterBarHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekFilterBarHeight) }
     private val peekHeaderHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekHeaderHeight) }
     private val peekTotalHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekTotalHeight) }
@@ -87,7 +87,7 @@ class NearbyBreweriesFragment : Fragment() {
             }
         }
 
-        recyclerView.adapter = itemAdapter
+        recyclerView.adapter = breweryLocationAdapter
 
         breweryDbService
                 .getLocationsByGeoPoint(40.024925, -83.0038657, unit = DISTANCE_UNIT_MILES)
@@ -96,7 +96,7 @@ class NearbyBreweriesFragment : Fragment() {
                 .subscribe({
                     it?.data?.apply {
                         removeUnusable()
-                        itemAdapter.addAll(this)
+                        breweryLocationAdapter.addAll(this)
                         mapView?.getMapAsync {
                             mapView ->
                             forEach {
@@ -120,7 +120,7 @@ class NearbyBreweriesFragment : Fragment() {
 
         selectedMarker = marker
 
-        val location = if (marker != null) itemAdapter.findById(marker.title) else null
+        val location = if (marker != null) breweryLocationAdapter.findById(marker.title) else null
         if (marker != null && location != null) {
             marker.setIcon(selectedMarkerIcon)
             marker.showInfoWindow()
@@ -220,9 +220,9 @@ class NearbyBreweriesFragment : Fragment() {
             CalligraphyUtils.applyFontToTextView(activity, nameLabel, getString(if (b) R.string.fontPathBold else R.string.fontPathRegular))
             CalligraphyUtils.applyFontToTextView(activity, distanceLabel, getString(if (b) R.string.fontPathRegular else R.string.fontPathBold))
             if (b) {
-                itemAdapter.sortByName()
+                breweryLocationAdapter.sortByName()
             } else {
-                itemAdapter.sortByDistance()
+                breweryLocationAdapter.sortByDistance()
             }
         }
 
@@ -253,7 +253,7 @@ class NearbyBreweriesFragment : Fragment() {
             }
         })
 
-        itemAdapter.header.setOnClickListener {
+        breweryLocationAdapter.header.setOnClickListener {
             slidingLayout.panelState = SlidingUpPanelLayout.PanelState.COLLAPSED
         }
 

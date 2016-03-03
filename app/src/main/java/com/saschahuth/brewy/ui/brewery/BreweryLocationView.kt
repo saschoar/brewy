@@ -9,8 +9,6 @@ import com.bumptech.glide.Glide
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.model.Location
 import com.saschahuth.brewy.domain.model.LocationParcel
-import com.saschahuth.brewy.ui.transformation.RoundedCornersTransformation
-import com.saschahuth.brewy.util.dimenToPixels
 import com.saschahuth.brewy.util.distanceTo
 import com.saschahuth.brewy.util.getFormattedAddress
 import com.saschahuth.brewy.util.getFormattedName
@@ -46,7 +44,7 @@ class BreweryLocationView : RelativeLayout {
         distance.text = "${location.distanceTo(40.024925, -83.0038657).toInt()} m away" //TODO just for testing
         val uriString = location.brewery?.images?.squareMedium
         if (uriString != null) {
-            Glide.with(context).load(uriString).bitmapTransform(RoundedCornersTransformation(context, dimenToPixels(R.dimen.marginSmall), 0)).into(image)
+            Glide.with(context).load(uriString).into(image)
         } else {
             Glide.clear(image);
             image.setImageResource(R.color.imagePlaceholder)
