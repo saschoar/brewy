@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.util;
+package com.saschahuth.brewy.ui.transformation;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

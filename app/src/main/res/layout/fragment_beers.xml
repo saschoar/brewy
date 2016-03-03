@@ -10,4 +10,4 @@
     android:paddingTop="@dimen/marginSmall"
     android:scrollbarStyle="outsideOverlay"
     android:scrollbars="vertical"
-    tools:listitem="@layout/item_brewery" />
+    tools:listitem="@layout/view_brewery_location" />

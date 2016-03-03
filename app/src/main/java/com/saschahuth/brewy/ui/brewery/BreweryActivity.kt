@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.ui.locationDetails
+package com.saschahuth.brewy.ui.brewery
 
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
@@ -11,22 +11,22 @@ import com.saschahuth.brewy.BaseActivity
 import com.saschahuth.brewy.BuildConfig
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.model.Location
-import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
-import com.saschahuth.brewy.util.BlurTransformation
-import com.saschahuth.brewy.util.RoundedCornersTransformation
+import com.saschahuth.brewy.domain.model.LocationParcel
+import com.saschahuth.brewy.ui.transformation.BlurTransformation
+import com.saschahuth.brewy.ui.transformation.RoundedCornersTransformation
 import com.saschahuth.brewy.util.dimenToPixels
 import com.saschahuth.brewy.util.getFormattedAddress
-import kotlinx.android.synthetic.main.activity_location_details.*
+import kotlinx.android.synthetic.main.activity_brewery.*
 import uk.co.chrisjenx.calligraphy.TypefaceUtils
 
-class LocationDetailsActivity : BaseActivity() {
+class BreweryActivity : BaseActivity() {
 
     var location: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContentView(R.layout.activity_location_details)
+        setContentView(R.layout.activity_brewery)
 
         Slidr.attach(this, SlidrConfig.Builder().sensitivity(0.5f).build())
 
@@ -44,11 +44,10 @@ class LocationDetailsActivity : BaseActivity() {
             description.text = location?.brewery?.description
             address.text = location?.getFormattedAddress("\n")
 
-            val matrix = ColorMatrix();
-            matrix.setSaturation(0F);
-
-            val filter = ColorMatrixColorFilter(matrix);
-            backdrop.colorFilter = filter;
+            with(ColorMatrix()) {
+                setSaturation(0F)
+                backdrop.colorFilter = ColorMatrixColorFilter(this)
+            }
 
             val address = Uri.encode(location?.streetAddress + ", " + location?.postalCode + " " + location?.locality)
 

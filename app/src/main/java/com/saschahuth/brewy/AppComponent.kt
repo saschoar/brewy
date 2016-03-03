@@ -1,12 +1,20 @@
 package com.saschahuth.brewy
 
-@AppScope
-public interface AppComponent : MainAppComponent {
+import com.saschahuth.brewy.domain.DomainModule
+import com.saschahuth.brewy.ui.adapter.ItemAdapter
+import com.saschahuth.brewy.ui.main.MainActivity
+import com.saschahuth.brewy.ui.main.NearbyBreweriesFragment
+import dagger.Component
+import javax.inject.Singleton
 
-    fun inject(app: BrewyApp)
+@Singleton
+@Component(modules = arrayOf(AndroidModule::class, DomainModule::class))
+interface AppComponent {
+    fun inject(brewyApp: BrewyApp)
 
-    object Initializer {
-        fun init(app: BrewyApp): AppComponent =
-                DaggerAppComponent.builder().build()
-    }
+    fun inject(mainActivity: MainActivity)
+
+    fun inject(nearbyBreweriesFragment: NearbyBreweriesFragment)
+
+    fun inject(itemAdapter: ItemAdapter)
 }

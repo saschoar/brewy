@@ -2,6 +2,7 @@ package com.saschahuth.brewy.ui.main
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -13,19 +14,27 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.model.*
+import com.saschahuth.brewy.BrewyApp
 import com.saschahuth.brewy.R
-import com.saschahuth.brewy.domain.BreweryDbServiceProvider
+import com.saschahuth.brewy.domain.BreweryDbService
+import com.saschahuth.brewy.domain.DISTANCE_UNIT_MILES
 import com.saschahuth.brewy.ui.adapter.ItemAdapter
 import com.saschahuth.brewy.util.hasLocationPermission
+import com.saschahuth.brewy.util.logDebug
+import com.saschahuth.brewy.util.removeUnusable
 import com.saschahuth.brewy.util.requestLocationPermission
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.fragment_nearby_breweries.*
+import rx.android.schedulers.AndroidSchedulers
+import rx.schedulers.Schedulers
 import uk.co.chrisjenx.calligraphy.CalligraphyUtils
 import javax.inject.Inject
 
 class NearbyBreweriesFragment : Fragment() {
 
-    @Inject lateinit var breweryDbServiceProvider: BreweryDbServiceProvider
+    @Inject lateinit var breweryDbService: BreweryDbService
+
+    @Inject lateinit var locationManager: LocationManager
 
     private val itemAdapter: ItemAdapter by lazy { ItemAdapter(activity, peekHeaderHeight) }
     private val peekFilterBarHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekFilterBarHeight) }
@@ -47,13 +56,9 @@ class NearbyBreweriesFragment : Fragment() {
 
     var canScrollVertically = true
 
-    companion object {
-        @JvmStatic fun newInstance() = NearbyBreweriesFragment()
-    }
-
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        MainComponent.Initializer.init(activity as MainActivity).inject(this)
+        BrewyApp.appComponent.inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -84,28 +89,29 @@ class NearbyBreweriesFragment : Fragment() {
 
         recyclerView.adapter = itemAdapter
 
-        breweryDbServiceProvider
-                .getLocationsByGeoPoint()
-                .subscribe {
-                    var data = it?.data
-
-                    if (data != null) {
-                        itemAdapter.addAll(data.filterNot {
-                            it.inPlanning ?: true || it.isClosed ?: true
-                        })
+        breweryDbService
+                .getLocationsByGeoPoint(40.024925, -83.0038657, unit = DISTANCE_UNIT_MILES)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    it?.data?.apply {
+                        removeUnusable()
+                        itemAdapter.addAll(this)
                         mapView?.getMapAsync {
                             mapView ->
-                            data.filterNot {
-                                it.inPlanning ?: true || it.isClosed ?: true
-                            }.forEach {
+                            forEach {
                                 mapView?.addMarker(MarkerOptions()
-                                        .position(LatLng(it.latitude?.toDouble() ?: 0.0, it.longitude?.toDouble() ?: 0.0))
+                                        .position(LatLng(it.latitude?: 0.0, it.longitude?: 0.0))
                                         .title(it.id)
                                         .icon(markerIcon))
                             }
                         }
                     }
-                }
+                }, {
+                    it.printStackTrace()
+                }, {
+                    logDebug("onComplete")
+                })
     }
 
     fun selectMarker(marker: Marker?) {
@@ -188,7 +194,7 @@ class NearbyBreweriesFragment : Fragment() {
                 }
 
                 override fun getInfoWindow(p0: Marker?): View? {
-                    return LayoutInflater.from(activity).inflate(R.layout.fake_info_window, null)
+                    return LayoutInflater.from(activity).inflate(R.layout.view_empty_info_window, null)
                 }
 
             })

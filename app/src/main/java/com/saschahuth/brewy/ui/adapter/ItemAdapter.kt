@@ -5,7 +5,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import com.saschahuth.brewy.domain.model.Location
-import com.saschahuth.brewy.ui.view.LocationItemView
+import com.saschahuth.brewy.ui.brewery.BreweryLocationView
 import com.saschahuth.brewy.util.distanceTo
 import java.util.*
 
@@ -31,7 +31,7 @@ class ItemAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapte
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-        val view = if (viewType == VIEW_TYPE_HEADER) header else LocationItemView(context)
+        val view = if (viewType == VIEW_TYPE_HEADER) header else BreweryLocationView(context)
         return object : RecyclerView.ViewHolder(view) {
 
         }
@@ -49,7 +49,7 @@ class ItemAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapte
         if (getItemViewType(position) == VIEW_TYPE_ITEM) {
             val location: Location? = list[position - 1]
             if (location != null) {
-                (viewHolder?.itemView as LocationItemView).bind(location)
+                (viewHolder?.itemView as BreweryLocationView).bind(location)
             }
         }
     }

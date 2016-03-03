@@ -59,7 +59,7 @@
                     android:src="@drawable/ic_my_location_24dp" />
             </LinearLayout>
 
-            <com.saschahuth.brewy.ui.view.LocationItemView
+            <com.saschahuth.brewy.ui.brewery.BreweryLocationView
                 android:id="@+id/markerLocationView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -148,7 +148,7 @@
                 android:overScrollMode="never"
                 android:scrollbarStyle="outsideOverlay"
                 android:scrollbars="vertical"
-                tools:listitem="@layout/item_brewery" />
+                tools:listitem="@layout/view_brewery_location" />
 
         </LinearLayout>
 

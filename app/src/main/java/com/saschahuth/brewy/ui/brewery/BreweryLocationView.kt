@@ -1,4 +1,4 @@
-package com.saschahuth.brewy.ui.view
+package com.saschahuth.brewy.ui.brewery
 
 import android.content.Context
 import android.content.Intent
@@ -8,15 +8,18 @@ import android.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.saschahuth.brewy.R
 import com.saschahuth.brewy.domain.model.Location
-import com.saschahuth.brewy.domain.brewerydb.model.LocationParcel
-import com.saschahuth.brewy.ui.locationDetails.LocationDetailsActivity
-import com.saschahuth.brewy.util.*
-import kotlinx.android.synthetic.main.item_brewery.view.*
+import com.saschahuth.brewy.domain.model.LocationParcel
+import com.saschahuth.brewy.ui.transformation.RoundedCornersTransformation
+import com.saschahuth.brewy.util.dimenToPixels
+import com.saschahuth.brewy.util.distanceTo
+import com.saschahuth.brewy.util.getFormattedAddress
+import com.saschahuth.brewy.util.getFormattedName
+import kotlinx.android.synthetic.main.view_brewery_location.view.*
 
 /**
  * Created by sascha on 24.02.16.
  */
-class LocationItemView : RelativeLayout {
+class BreweryLocationView : RelativeLayout {
 
     var boundLocation: Location? = null
 
@@ -28,7 +31,7 @@ class LocationItemView : RelativeLayout {
 
     init {
         setBackgroundResource(R.color.defaultBackground)
-        LayoutInflater.from(context).inflate(R.layout.item_brewery, this, true)
+        LayoutInflater.from(context).inflate(R.layout.view_brewery_location, this, true)
 
         setOnClickListener {
             openDetailsActivity(boundLocation)
@@ -52,7 +55,7 @@ class LocationItemView : RelativeLayout {
 
     fun openDetailsActivity(location: Location?) {
         val locationParcel = LocationParcel.wrap(location)
-        val intent = Intent(context, LocationDetailsActivity::class.java)
+        val intent = Intent(context, BreweryActivity::class.java)
         intent.putExtra("location", locationParcel)
         context.startActivity(intent)
     }

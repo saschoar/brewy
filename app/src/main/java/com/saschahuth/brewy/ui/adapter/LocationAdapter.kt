@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import com.saschahuth.brewy.domain.model.Location
-import com.saschahuth.brewy.ui.view.LocationItemView
+import com.saschahuth.brewy.ui.brewery.BreweryLocationView
 import com.saschahuth.brewy.util.distanceTo
 
 /**
@@ -15,8 +15,8 @@ import com.saschahuth.brewy.util.distanceTo
 class LocationAdapter(context: Context) : ArrayAdapter<Location>(context, 0) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View? {
-        val view: View = (convertView ?: LocationItemView(context))
-        (view as LocationItemView).bind(getItem(position))
+        val view: View = (convertView ?: BreweryLocationView(context))
+        (view as BreweryLocationView).bind(getItem(position))
         return view
     }
 

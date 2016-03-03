@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.locationDetails.LocationDetailsActivity"
+            android:name=".ui.brewery.BreweryActivity"
             android:label="@string/app_name"
             android:parentActivityName=".ui.main.MainActivity"
             android:theme="@style/Theme.Brewy.Slidr" />

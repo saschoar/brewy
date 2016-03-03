@@ -37,8 +37,8 @@ fun Any.logDebug(any: Any?) {
 
 fun Location.distanceTo(latitude: Double = 0.0, longitude: Double = 0.0): Float {
     val location1 = android.location.Location("")
-    location1.latitude = this.latitude?.toDouble() ?: 0.0
-    location1.longitude = this.longitude?.toDouble() ?: 0.0
+    location1.latitude = this.latitude ?: 0.0
+    location1.longitude = this.longitude ?: 0.0
     val location2 = android.location.Location("")
     location2.latitude = latitude
     location2.longitude = longitude
@@ -72,3 +72,5 @@ fun Activity.requestLocationPermission(requestCode: Int) {
 
 fun Context.dimenToPixels(resourceId: Int) = resources.getDimensionPixelSize(resourceId)
 fun View.dimenToPixels(resourceId: Int) = context.dimenToPixels(resourceId)
+
+fun List<Location>.removeUnusable() = filterNot { it.inPlanning ?: true || it.isClosed ?: true }
