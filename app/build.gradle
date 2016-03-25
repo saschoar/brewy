@@ -3,6 +3,7 @@ import groovy.transform.Field
 buildscript {
     ext.kotlin_version = "1.0.1-1"
     repositories {
+        jcenter()
         mavenCentral()
     }
     dependencies {
