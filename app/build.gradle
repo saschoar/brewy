@@ -1,12 +1,12 @@
 import groovy.transform.Field
 
 buildscript {
-    ext.kotlin_version = "1.0.0"
+    ext.kotlin_version = "1.0.1-1"
     repositories {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.0.0-beta6'
+        classpath 'com.android.tools.build:gradle:2.0.0-beta7'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -57,8 +57,8 @@ android {
 }
 
 @Field
-String supportLibraryVersion = "23.2.0",
-       kotlinVersion = "1.0.0"
+String supportLibraryVersion = "23.2.1",
+       kotlinVersion = "1.0.1-1"
 
 dependencies {
     testCompile 'junit:junit:4.12'

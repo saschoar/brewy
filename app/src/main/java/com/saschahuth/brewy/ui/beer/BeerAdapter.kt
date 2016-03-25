@@ -2,7 +2,6 @@ package com.saschahuth.brewy.ui.beer
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.view.ViewGroup
 import com.saschahuth.brewy.domain.model.Beer
 import java.util.*
@@ -19,17 +18,10 @@ class BeerAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapte
     val VIEW_TYPE_HEADER = 0
     val VIEW_TYPE_ITEM = 1
 
-    val header: View by lazy {
-        View(context).apply {
-            layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, headerHeight)
-            isFocusable = false
-            isFocusableInTouchMode = false
-            isClickable = false
-        }
-    }
+    val breweryDetailsView: BreweryDetailsView by lazy { BreweryDetailsView(context) }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-        val view = if (viewType == VIEW_TYPE_HEADER) header else BeerView(context)
+        val view = if (viewType == VIEW_TYPE_HEADER) breweryDetailsView else BeerView(context)
         return object : RecyclerView.ViewHolder(view) {
 
         }
@@ -55,19 +47,6 @@ class BeerAdapter(context: Context, headerHeight: Int = 0) : RecyclerView.Adapte
     fun addAll(toAdd: List<Beer>) {
         list.addAll(toAdd)
         notifyDataSetChanged()
-    }
-
-    fun findById(id: String): Beer? {
-        try {
-            val count = list.size
-            for (i in 0..count) {
-                val beer = list[i]
-                if (beer.id == id) return beer
-            }
-        } catch(e: IndexOutOfBoundsException) {
-            e.printStackTrace()
-        }
-        return null
     }
 
     fun sortByName() {

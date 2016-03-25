@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/headerWrapper"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/margin"
+    tools:ignore="MissingPrefix">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="@dimen/detailImageWidth"
+        android:layout_height="@dimen/detailImageHeight"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/marginSmall"
+        android:layout_marginTop="@dimen/marginSmall"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/title"
+        fontPath="@string/fontPathHeadline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:textColor="@color/textDefault"
+        android:textSize="@dimen/textSizeDetailHeadline"
+        tools:text="Brewery Name" />
+
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:textColor="@color/textDefault"
+        android:textSize="@dimen/textSizeDefault"
+        tools:text="Description" />
+
+    <TextView
+        fontPath="@string/fontPathBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin"
+        android:singleLine="true"
+        android:text="Location"
+        android:textAllCaps="true"
+        android:textColor="@color/textLight"
+        android:textSize="@dimen/textSizeSmall" />
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/marginSmall"
+        android:textColor="@color/textDefault"
+        android:textSize="@dimen/textSizeDefault"
+        tools:text="Street address" />
+</LinearLayout>

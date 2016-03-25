@@ -36,10 +36,10 @@ class NearbyBreweriesFragment : Fragment() {
 
     @Inject lateinit var locationManager: LocationManager
 
-    private val breweryLocationAdapter: BreweryLocationAdapter by lazy { BreweryLocationAdapter(activity, peekHeaderHeight) }
-    private val peekFilterBarHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekFilterBarHeight) }
     private val peekHeaderHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekHeaderHeight) }
     private val peekTotalHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekTotalHeight) }
+    private val breweryLocationAdapter: BreweryLocationAdapter by lazy { BreweryLocationAdapter(activity, peekHeaderHeight) }
+    private val peekFilterBarHeight: Int by lazy { activity.resources.getDimensionPixelSize(R.dimen.peekFilterBarHeight) }
 
     private val PERMISSIONS_LOCATION = 0
 

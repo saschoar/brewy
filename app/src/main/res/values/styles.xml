@@ -29,14 +29,4 @@
         <item name="android:colorForeground">?colorAccent</item>
     </style>
 
-    <style name="CollapsedTitleTextAppearance">
-        <item name="android:textSize">@dimen/textSizeToolbar</item>
-        <item name="android:textColor">?colorAccent</item>
-    </style>
-
-    <style name="ExpandedTitleTextAppearance">
-        <item name="android:textSize">@dimen/textSizeDetailHeadline</item>
-        <item name="android:textColor">@color/textDefault</item>
-    </style>
-
 </resources>
